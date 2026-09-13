@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminAuth } from "@/lib/auth-admin";
 import {
-  updateBookingStatusInDb,
-  deleteBookingFromDb,
+  updateBookingStatus,
+  deleteBooking,
   BookingStatus,
-} from "@/lib/db";
+  recordActivity,
+} from "@/lib/db-server";
 
 export async function PATCH(
   req: NextRequest,
@@ -38,13 +39,23 @@ export async function PATCH(
       );
     }
 
-    const updated = updateBookingStatusInDb(bookingId, status);
+    const updated = await updateBookingStatus(bookingId, status);
     if (!updated) {
       return NextResponse.json(
         { error: "Booking record not found." },
         { status: 404 }
       );
     }
+
+    await recordActivity({
+      actorId: authResult.userId,
+      actorEmail: authResult.userEmail || "admin",
+      action: "BOOKING_STATUS_UPDATED",
+      entityType: "BOOKING",
+      entityId: bookingId,
+      description: `Administrator changed status of booking ${bookingId} to ${status}`,
+      metadata: { bookingId, status },
+    });
 
     return NextResponse.json({
       success: true,
@@ -73,7 +84,7 @@ export async function DELETE(
     }
 
     const { id: bookingId } = await params;
-    const deleted = deleteBookingFromDb(bookingId);
+    const deleted = await deleteBooking(bookingId);
 
     if (!deleted) {
       return NextResponse.json(
@@ -81,6 +92,16 @@ export async function DELETE(
         { status: 404 }
       );
     }
+
+    await recordActivity({
+      actorId: authResult.userId,
+      actorEmail: authResult.userEmail || "admin",
+      action: "BOOKING_DELETED",
+      entityType: "BOOKING",
+      entityId: bookingId,
+      description: `Administrator purged booking record ${bookingId}`,
+      metadata: { bookingId },
+    });
 
     return NextResponse.json({
       success: true,

@@ -65,26 +65,7 @@ export default function ContactPage() {
             </div>
           </TextSlideFromTop>
 
-          <Element3DReveal delay={0.35}>
-            <div className="pt-6 border-t border-[#A78D78]/50 space-y-4">
-              <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-black font-extrabold block">
-                Primary Studio Addresses
-              </span>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {AGENCY_INFO.offices.map((office) => (
-                  <div
-                    key={office.city}
-                    className="p-4 bg-[#BEB5A9]/60 border border-[#A78D78]/50 rounded-xl space-y-1 shadow-md"
-                  >
-                    <p className="font-serif text-sm font-black text-black">{office.city}</p>
-                    <p className="text-[11px] text-black font-bold">{office.address}</p>
-                    <p className="text-[10px] text-black font-mono font-extrabold">{office.phone}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Element3DReveal>
         </div>
 
         {/* Right Column: Form */}

@@ -39,25 +39,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased bg-[#E1D4C2] text-black selection:bg-black selection:text-[#E1D4C2]">
-        <ClerkProvider
-          appearance={{
-            elements: {
-              card: "bg-[#BEB5A9] border border-[#A78D78] shadow-2xl rounded-2xl text-black",
-              headerTitle: "font-serif text-2xl text-black font-extrabold",
-              headerSubtitle: "font-sans text-xs text-black font-semibold",
-              socialButtonsBlockButton:
-                "bg-[#E1D4C2] border border-black text-black hover:bg-[#A78D78] font-bold text-xs uppercase tracking-wider",
-              formButtonPrimary:
-                "bg-[#A78D78] hover:bg-[#BEB5A9] text-black border border-black font-extrabold text-xs uppercase tracking-[0.18em] rounded-full py-3 transition-all",
-              footerActionLink: "text-black underline font-bold hover:text-[#A78D78]",
-              avatarBox: "w-9 h-9 border border-black rounded-full shadow-md",
-              userButtonPopoverCard:
-                "bg-[#BEB5A9] border border-[#A78D78] shadow-2xl rounded-xl text-black",
-            },
-          }}
-        >
-          {children}
-        </ClerkProvider>
+        <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>
   );

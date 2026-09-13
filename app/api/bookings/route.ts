@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { createBookingInDb } from "@/lib/db";
+import { createBooking, createMessage, recordActivity } from "@/lib/db-server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,11 +51,16 @@ export async function POST(req: NextRequest) {
       // Guest booking
     }
 
-    const createdRecord = createBookingInDb({
-      fullName: fullName.trim(),
-      email: email.trim().toLowerCase(),
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedName = fullName.trim();
+    const normalizedService = (service || "Haute Residential Architecture").toString().trim();
+
+    // 1. Create the booking record
+    const createdRecord = await createBooking({
+      fullName: normalizedName,
+      email: normalizedEmail,
       phone: (phone || "").toString().trim(),
-      service: (service || "Haute Residential Architecture").toString().trim(),
+      service: normalizedService,
       preferredDate: (preferredDate || "").toString().trim(),
       preferredTime: (preferredTime || "").toString().trim(),
       projectDetails: detailsText,
@@ -63,6 +68,37 @@ export async function POST(req: NextRequest) {
       location: (location || "Unspecified").toString().trim(),
       message: detailsText,
       clerkUserId,
+    });
+
+    // 2. Mirror booking as an inquiry message so the admin Messages inbox shows it
+    try {
+      await createMessage({
+        name: normalizedName,
+        email: normalizedEmail,
+        phone: (phone || "").toString().trim(),
+        subject: `[${createdRecord.bookingId}] ${normalizedService} — ${normalizedName}`,
+        message: detailsText,
+        service: normalizedService,
+      });
+    } catch (msgErr) {
+      // Non-fatal: log error but do not fail the booking submission
+      console.warn("Could not create message mirror for booking:", msgErr);
+    }
+
+    // 3. Record audit activity
+    await recordActivity({
+      actorId: clerkUserId,
+      actorEmail: normalizedEmail,
+      action: "BOOKING_SUBMITTED",
+      entityType: "BOOKING",
+      entityId: createdRecord.bookingId,
+      description: `New booking dossier submitted by ${normalizedName} (${createdRecord.bookingId}) for ${createdRecord.service}`,
+      metadata: {
+        bookingId: createdRecord.bookingId,
+        service: createdRecord.service,
+        budget: createdRecord.budget,
+        location: createdRecord.location,
+      },
     });
 
     return NextResponse.json(
@@ -74,10 +110,10 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating booking:", error);
     return NextResponse.json(
-      { error: "An error occurred while transmitting your dossier. Please try again." },
+      { error: error?.message || "An error occurred while transmitting your dossier. Please try again." },
       { status: 500 }
     );
   }

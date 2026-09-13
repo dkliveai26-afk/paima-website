@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Check, Send, AlertCircle, Calendar, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GoogleAddressAutocomplete } from "@/components/ui/GoogleAddressAutocomplete";
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -287,15 +288,13 @@ export function ContactForm() {
       {/* Location */}
       <div className="space-y-2">
         <label htmlFor="contact-loc" className="text-[10px] uppercase font-sans tracking-[0.18em] text-black font-extrabold block">
-          Property Location
+          Property Location / Address
         </label>
-        <input
-          type="text"
+        <GoogleAddressAutocomplete
           id="contact-loc"
           value={formData.location}
-          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-          className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black placeholder:text-black/60 focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold"
-          placeholder="e.g. Tribeca, NY / Saint-Germain, Paris"
+          onChange={(val) => setFormData({ ...formData, location: val })}
+          placeholder="e.g. 575 Madison Ave, New York / Avenue Princesse Grace, Monaco"
         />
       </div>
 

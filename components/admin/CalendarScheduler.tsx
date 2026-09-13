@@ -1,430 +1,304 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  CalendarDays,
+  Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
   Clock,
   MapPin,
-  Plus,
-  Filter,
-  CheckCircle2,
-  X,
   Layers,
-  Sparkles,
-  Users,
+  CheckCircle2,
+  RefreshCw,
+  User,
+  ExternalLink,
 } from "lucide-react";
-import {
-  INITIAL_CALENDAR_EVENTS,
-  CalendarBookingEvent,
-  BookingStatus,
-} from "./admin-mock-data";
 import { useAdmin } from "./AdminLayoutShell";
-
-type CalendarViewMode = "MONTH" | "WEEK" | "DAY";
-
-const STATUS_CHIP_COLORS: Record<BookingStatus, string> = {
-  NEW: "bg-amber-500/20 text-amber-300 border-amber-500/40",
-  CONTACTED: "bg-blue-500/20 text-blue-300 border-blue-500/40",
-  CONFIRMED: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
-  COMPLETED: "bg-purple-500/20 text-purple-300 border-purple-500/40",
-  CANCELLED: "bg-red-500/20 text-red-400 border-red-500/40",
-};
+import { BookingRecord, BookingStatus } from "@/lib/db-server";
 
 export function CalendarScheduler() {
-  const { showToast, openNewInquiryModal } = useAdmin();
-  const [viewMode, setViewMode] = useState<CalendarViewMode>("MONTH");
-  const [currentMonth, setCurrentMonth] = useState("September 2026");
-  const [events, setEvents] = useState<CalendarBookingEvent[]>(INITIAL_CALENDAR_EVENTS);
-  const [selectedEvent, setSelectedEvent] = useState<CalendarBookingEvent | null>(null);
+  const { showToast } = useAdmin();
+  const [bookings, setBookings] = useState<BookingRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
 
-  // Month days generation for September 2026 (Starts on Tuesday Sep 1, 30 days)
-  const daysInMonth = Array.from({ length: 30 }, (_, i) => i + 1);
-  const startDayOffset = 1; // Tuesday (0=Mon, 1=Tue in European calendar)
+  const [errorState, setErrorState] = useState(false);
 
-  const getEventsForDay = (day: number) => {
-    const dayStr = `2026-09-${day < 10 ? "0" + day : day}`;
-    return events.filter((e) => e.date === dayStr);
+  const fetchBookings = async () => {
+    setLoading(true);
+    setErrorState(false);
+    try {
+      const res = await fetch("/api/admin/bookings");
+      if (!res.ok) {
+        setErrorState(true);
+        if (res.status === 401 || res.status === 403) {
+          showToast("Session Notice", "Your executive session may have expired. Please refresh or authenticate again.", "error");
+        } else {
+          showToast("Notice", "Unable to load data right now. Please try again.", "error");
+        }
+        return;
+      }
+      const data = await res.json();
+      setBookings(data.bookings || []);
+    } catch (err: any) {
+      console.error("Fetch calendar error:", err);
+      setErrorState(true);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  // Calendar calculations
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const prevMonth = () => {
+    setCurrentDate(new Date(year, month - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentDate(new Date(year, month + 1, 1));
+  };
+
+  // Group bookings by date string (YYYY-MM-DD)
+  const bookingsByDate: Record<string, BookingRecord[]> = {};
+  for (const b of bookings) {
+    if (b.preferredDate) {
+      // normalize date string
+      const dateKey = b.preferredDate.split("T")[0];
+      if (!bookingsByDate[dateKey]) bookingsByDate[dateKey] = [];
+      bookingsByDate[dateKey].push(b);
+    }
+  }
+
+  // Days array for current month grid
+  const days = [];
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    days.push(null);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    days.push({ day: d, dateStr });
+  }
+
+  const selectedDayBookings = bookingsByDate[selectedDate] || [];
 
   return (
     <div className="space-y-6">
-      {/* 1. HEADER & CONTROLS */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-[#1E232E]">
+      {/* 1. HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E5D5C5]">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold font-serif text-white tracking-wide">
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="w-4 h-4 text-[#B3877F]" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#B3877F] font-bold">
+              CONSULTATION SCHEDULE
+            </span>
+          </div>
+          <h2 className="font-serif text-2xl font-bold text-[#1C1614] mt-1">
             Private Calendar &amp; Consultations
           </h2>
-          <p className="text-xs text-gray-400 font-sans mt-0.5">
-            Architectural site surveys, client design briefings, and material presentations.
+          <p className="text-xs text-[#5D4A44] mt-0.5">
+            Confirmed consultations and preferred appointment requests from active dossiers.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* VIEW SWITCHER */}
-          <div className="flex items-center bg-[#181E29] border border-[#263143] rounded-xl p-1">
-            {(["MONTH", "WEEK", "DAY"] as CalendarViewMode[]).map((mode) => (
+        <button
+          type="button"
+          onClick={fetchBookings}
+          className="px-3.5 py-2 rounded-xl bg-[#F7F2EA] hover:bg-[#F2E8E3] text-[#4A3B36] text-xs font-semibold border border-[#E5D5C5] flex items-center gap-2 transition-all cursor-pointer shadow-sm self-start sm:self-auto"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-[#B3877F]" : "text-[#B3877F]"}`} />
+          <span>Sync Calendar</span>
+        </button>
+      </div>
+
+      {/* 2. CALENDAR GRID + DAY DETAILS */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left: Monthly Calendar View */}
+        <div className="lg:col-span-8 p-6 rounded-2xl bg-[#F7F2EA] border border-[#E5D5C5] space-y-6">
+          {/* Month Navigator Header */}
+          <div className="flex items-center justify-between">
+            <h3 className="font-serif text-xl font-bold text-[#1C1614]">
+              {monthNames[month]} {year}
+            </h3>
+
+            <div className="flex items-center gap-2">
               <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                className={`text-[10px] font-mono font-bold px-3 py-1.5 rounded-lg transition-all ${
-                  viewMode === mode
-                    ? "bg-[#252E3E] text-white shadow-sm border border-[#37445C]"
-                    : "text-gray-400 hover:text-gray-200"
-                }`}
+                type="button"
+                onClick={prevMonth}
+                className="p-2 rounded-xl bg-[#FDFBF7] hover:bg-[#F2E8E3] text-[#4A3B36] border border-[#E5D5C5] transition-colors"
               >
-                {mode} View
+                <ChevronLeft className="w-4 h-4" />
               </button>
-            ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const now = new Date();
+                  setCurrentDate(now);
+                  setSelectedDate(now.toISOString().split("T")[0]);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-[#FDFBF7] hover:bg-[#F2E8E3] text-[#4A3B36] text-xs font-mono font-bold border border-[#E5D5C5]"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                onClick={nextMonth}
+                className="p-2 rounded-xl bg-[#FDFBF7] hover:bg-[#F2E8E3] text-[#4A3B36] border border-[#E5D5C5] transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          <button
-            type="button"
-            onClick={openNewInquiryModal}
-            className="bg-gradient-to-r from-[#D4AF37] to-[#B38F2B] hover:from-[#E5C358] hover:to-[#C29E37] text-black font-bold text-xs px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5 transition-all font-sans"
-          >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span className="hidden sm:inline">Schedule Session</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. CALENDAR NAVIGATION TOOLBAR */}
-      <div className="bg-[#12161F] border border-[#1E2533] p-4 rounded-2xl shadow-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => showToast("Navigation", "Viewing previous cycle")}
-              className="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-[#181E29] border border-[#232A37]"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => showToast("Navigation", "Viewing next cycle")}
-              className="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-[#181E29] border border-[#232A37]"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+          {/* Weekday Names */}
+          <div className="grid grid-cols-7 gap-2 text-center text-[10px] font-mono font-bold text-[#7D6B64] uppercase tracking-wider">
+            <span>Sun</span>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
           </div>
 
-          <h3 className="text-base font-bold text-white font-serif tracking-wide">
-            {currentMonth}
-          </h3>
+          {/* Days Grid */}
+          <div className="grid grid-cols-7 gap-2">
+            {days.map((item, index) => {
+              if (!item) {
+                return (
+                  <div
+                    key={`empty-${index}`}
+                    className="min-h-[70px] sm:min-h-[85px] rounded-xl bg-[#FDFBF7]/50 border border-transparent"
+                  />
+                );
+              }
 
-          <button
-            onClick={() => showToast("Navigation", "Returned to current date")}
-            className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-[#181E29] text-gray-300 hover:text-white border border-[#263143]"
-          >
-            Today
-          </button>
-        </div>
-
-        {/* STATUS LEGEND */}
-        <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono">
-          <span className="text-gray-500">Legend:</span>
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> New Inquiry
-          </span>
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Contacted
-          </span>
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Confirmed
-          </span>
-        </div>
-      </div>
-
-      {/* 3. CALENDAR VIEWS */}
-      {viewMode === "MONTH" && (
-        <div className="bg-[#12161F] border border-[#1E2533] rounded-2xl shadow-xl overflow-hidden">
-          {/* DAY NAMES HEADER */}
-          <div className="grid grid-cols-7 bg-[#0D1016] border-b border-[#1E2533] text-center text-[10px] font-mono uppercase tracking-wider text-gray-400 py-3">
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
-            <div>Sun</div>
-          </div>
-
-          {/* MONTH GRID */}
-          <div className="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-[#181E29] bg-[#0E1117]">
-            {/* Blank leading days for offset */}
-            {Array.from({ length: startDayOffset }).map((_, idx) => (
-              <div
-                key={`empty-${idx}`}
-                className="min-h-[110px] p-2 bg-[#0A0C10]/40"
-              />
-            ))}
-
-            {/* Days of Month */}
-            {daysInMonth.map((day) => {
-              const dayEvents = getEventsForDay(day);
-              const isToday = day === 12;
+              const hasEvents = bookingsByDate[item.dateStr]?.length > 0;
+              const isSelected = selectedDate === item.dateStr;
+              const isToday =
+                new Date().toISOString().split("T")[0] === item.dateStr;
 
               return (
-                <div
-                  key={day}
-                  className={`min-h-[110px] p-2 transition-colors flex flex-col justify-between ${
-                    isToday ? "bg-[#161D2B]/70" : "hover:bg-[#141822]"
+                <button
+                  key={item.dateStr}
+                  type="button"
+                  onClick={() => setSelectedDate(item.dateStr)}
+                  className={`min-h-[70px] sm:min-h-[85px] p-2 rounded-xl border flex flex-col justify-between transition-all text-left group cursor-pointer ${
+                    isSelected
+                      ? "bg-[#FDFBF7] border-[#B3877F] shadow-sm"
+                      : "bg-[#FDFBF7] border-[#E5D5C5] hover:border-[#D8C5BD]"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span
                       className={`text-xs font-mono font-bold ${
                         isToday
-                          ? "w-6 h-6 rounded-full bg-[#D4AF37] text-black flex items-center justify-center shadow-md"
-                          : "text-gray-400"
+                          ? "px-1.5 py-0.5 rounded-md bg-[#EAD8D3] text-[#1C1614]"
+                          : isSelected
+                          ? "text-[#4A3B36]"
+                          : "text-[#7D6B64]"
                       }`}
                     >
-                      {day}
+                      {item.day}
                     </span>
-                    {dayEvents.length > 0 && (
-                      <span className="text-[9px] font-mono text-gray-500">
-                        {dayEvents.length} ev
-                      </span>
+
+                    {hasEvents && (
+                      <span className="w-2 h-2 rounded-full bg-[#B3877F] shadow-[0_0_6px_#EAD8D3]" />
                     )}
                   </div>
 
-                  {/* EVENTS CHIPS */}
-                  <div className="space-y-1 mt-1 flex-1">
-                    {dayEvents.map((ev) => (
-                      <button
-                        key={ev.id}
-                        type="button"
-                        onClick={() => setSelectedEvent(ev)}
-                        className={`w-full text-left p-1 rounded text-[10px] font-mono truncate border block transition-transform hover:scale-[1.02] ${
-                          STATUS_CHIP_COLORS[ev.status]
-                        }`}
-                      >
-                        <span className="font-bold">{ev.startTime}</span> • {ev.clientName}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                  {hasEvents && (
+                    <div className="space-y-1 mt-1">
+                      <div className="px-1.5 py-0.5 rounded bg-[#F2E8E3] text-[9px] font-mono text-[#5D4A44] truncate border border-[#E5D5C5]">
+                        {bookingsByDate[item.dateStr].length}{" "}
+                        {bookingsByDate[item.dateStr].length === 1 ? "Consult" : "Consults"}
+                      </div>
+                    </div>
+                  )}
+                </button>
               );
             })}
           </div>
         </div>
-      )}
 
-      {/* WEEK VIEW */}
-      {viewMode === "WEEK" && (
-        <div className="bg-[#12161F] border border-[#1E2533] rounded-2xl shadow-xl p-5 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#1E2533]">
-            <h4 className="text-sm font-bold text-white font-serif">
-              Week of September 21 – 27, 2026
-            </h4>
-            <span className="text-xs font-mono text-gray-400">
-              Active Studio Schedule
+        {/* Right: Selected Day's Bookings */}
+        <div className="lg:col-span-4 p-6 rounded-2xl bg-[#F7F2EA] border border-[#E5D5C5] space-y-4">
+          <div className="pb-3 border-b border-[#E5D5C5]">
+            <span className="text-[10px] font-mono uppercase text-[#B3877F] font-bold">
+              SCHEDULED DOSSIERS
             </span>
+            <h3 className="font-serif text-lg font-bold text-[#1C1614] mt-0.5">
+              {new Date(selectedDate + "T00:00:00").toLocaleDateString(undefined, {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
-            {[
-              { day: "Mon 21", events: [] },
-              { day: "Tue 22", events: [] },
-              { day: "Wed 23", events: [] },
-              {
-                day: "Thu 24",
-                events: [
-                  {
-                    time: "14:30 – 16:30",
-                    title: "Avenue Montaigne Survey",
-                    client: "Eleanor Vance-Roche",
-                    loc: "Paris, 8th Arr.",
-                    status: "NEW" as BookingStatus,
-                  },
-                ],
-              },
-              { day: "Fri 25", events: [] },
-              { day: "Sat 26", events: [] },
-              { day: "Sun 27", events: [] },
-            ].map((col, idx) => (
-              <div
-                key={idx}
-                className="bg-[#161B24] border border-[#232B3A] rounded-xl p-3 min-h-[220px] flex flex-col"
-              >
-                <span className="text-xs font-mono font-bold text-white block pb-2 border-b border-[#232B3A]">
-                  {col.day}
-                </span>
-
-                <div className="mt-3 space-y-2 flex-1">
-                  {col.events.length === 0 ? (
-                    <span className="text-[10px] text-gray-500 italic block pt-2">
-                      No consultations
-                    </span>
-                  ) : (
-                    col.events.map((ev, i) => (
-                      <div
-                        key={i}
-                        className={`p-2 rounded-lg border text-xs space-y-1 ${
-                          STATUS_CHIP_COLORS[ev.status]
-                        }`}
-                      >
-                        <div className="font-bold text-[11px]">{ev.time}</div>
-                        <div className="font-medium text-white">{ev.title}</div>
-                        <div className="text-[10px] opacity-80">{ev.client}</div>
-                        <div className="text-[9px] opacity-70 flex items-center gap-1">
-                          <MapPin className="w-2.5 h-2.5" /> {ev.loc}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* DAY VIEW */}
-      {viewMode === "DAY" && (
-        <div className="bg-[#12161F] border border-[#1E2533] rounded-2xl shadow-xl p-5 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#1E2533]">
-            <div>
-              <h4 className="text-sm font-bold text-white font-serif">
-                Thursday, September 24, 2026
-              </h4>
-              <p className="text-xs text-gray-400 font-mono">
-                1 Private Appointment Scheduled
+          {selectedDayBookings.length === 0 ? (
+            <div className="py-12 text-center space-y-2">
+              <CalendarIcon className="w-8 h-8 mx-auto text-[#7D6B64]/60" />
+              <p className="text-xs text-[#7D6B64]">
+                No consultations scheduled for this date.
               </p>
             </div>
-            <span className="text-xs font-mono px-3 py-1 rounded-full bg-[#181E29] text-gray-300 border border-[#263143]">
-              CET Paris Timezone
-            </span>
-          </div>
+          ) : (
+            <div className="space-y-3">
+              {selectedDayBookings.map((b) => (
+                <div
+                  key={b.bookingId}
+                  className="p-4 rounded-xl bg-[#FDFBF7] border border-[#E5D5C5] space-y-2.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] text-[#4A3B36] font-bold">
+                      {b.bookingId}
+                    </span>
+                    <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#EAD8D3] text-[#4A3B36] border border-[#D8C5BD] font-bold">
+                      {b.status}
+                    </span>
+                  </div>
 
-          <div className="space-y-3">
-            {[
-              { time: "09:00", title: "Studio Material Review (Internal)", active: false },
-              { time: "11:00", title: "Open Consultation Slot", active: false },
-              {
-                time: "14:30 – 16:30",
-                title: "Avenue Montaigne Triplex Architectural Survey",
-                client: "Eleanor Vance-Roche",
-                loc: "Avenue Montaigne, 8th Arr., Paris",
-                status: "NEW" as BookingStatus,
-                active: true,
-              },
-              { time: "17:00", title: "Lighting & Stone Suppliers Briefing", active: false },
-            ].map((slot, idx) => (
-              <div
-                key={idx}
-                className={`p-4 rounded-xl border flex items-start justify-between gap-4 ${
-                  slot.active
-                    ? "bg-[#1A2230] border-[#364663]"
-                    : "bg-[#141822] border-[#202736] opacity-60"
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <span className="text-xs font-mono font-bold text-[#D4AF37] w-28">
-                    {slot.time}
-                  </span>
                   <div>
-                    <h5 className="text-sm font-bold text-white">{slot.title}</h5>
-                    {slot.client && (
-                      <p className="text-xs text-gray-300 mt-0.5">
-                        Client: {slot.client}
-                      </p>
-                    )}
-                    {slot.loc && (
-                      <p className="text-[11px] text-gray-400 flex items-center gap-1 mt-1">
-                        <MapPin className="w-3 h-3 text-gray-500" /> {slot.loc}
-                      </p>
-                    )}
+                    <h4 className="font-serif font-bold text-sm text-[#1C1614]">
+                      {b.fullName}
+                    </h4>
+                    <p className="text-[11px] text-[#5D4A44]">{b.service}</p>
+                  </div>
+
+                  <div className="space-y-1 text-[11px] text-[#7D6B64] pt-1 border-t border-[#E5D5C5]">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-[#B3877F]" />
+                      <span className="font-mono text-[#4A3B36]">{b.preferredTime || "10:00 AM"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-[#B3877F]" />
+                      <span>{b.location}</span>
+                    </div>
                   </div>
                 </div>
-
-                {slot.status && (
-                  <span
-                    className={`text-[10px] font-mono px-2.5 py-1 rounded-full border font-bold ${
-                      STATUS_CHIP_COLORS[slot.status]
-                    }`}
-                  >
-                    {slot.status}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-
-      {/* 4. EVENT DETAILS MODAL */}
-      {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
-            onClick={() => setSelectedEvent(null)}
-          />
-          <div className="relative bg-[#12161F] border border-[#252E3E] rounded-2xl max-w-md w-full p-6 shadow-2xl z-10 animate-in fade-in zoom-in-95">
-            <div className="flex items-start justify-between pb-3 border-b border-[#252E3E]">
-              <div>
-                <span className="text-[10px] font-mono text-[#D4AF37] font-bold block">
-                  {selectedEvent.bookingId} • {selectedEvent.service}
-                </span>
-                <h3 className="text-base font-bold text-white font-serif mt-0.5">
-                  {selectedEvent.title}
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="text-gray-400 hover:text-white p-1 rounded-lg"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="py-4 space-y-3 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Client</span>
-                <span className="font-semibold text-white">
-                  {selectedEvent.clientName}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Date</span>
-                <span className="font-mono text-gray-200">
-                  {selectedEvent.date}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Time Window</span>
-                <span className="font-mono text-gray-200">
-                  {selectedEvent.startTime} – {selectedEvent.endTime}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Location</span>
-                <span className="text-gray-200">{selectedEvent.location}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Status</span>
-                <span
-                  className={`text-[10px] font-mono px-2 py-0.5 rounded border font-bold ${
-                    STATUS_CHIP_COLORS[selectedEvent.status]
-                  }`}
-                >
-                  {selectedEvent.status}
-                </span>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-[#252E3E] flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedEvent(null)}
-                className="px-4 py-2 rounded-xl bg-[#1E2533] text-gray-300 hover:text-white text-xs font-mono"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -1,349 +1,589 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MessageSquare,
   Search,
-  Star,
-  Send,
   Mail,
   Phone,
-  Paperclip,
-  CheckCircle2,
-  Sparkles,
-  User,
-  ArrowRight,
   Clock,
+  CheckCircle2,
   Trash2,
+  RefreshCw,
+  Eye,
+  Reply,
   X,
+  AlertCircle,
+  Filter,
 } from "lucide-react";
-import { INITIAL_MESSAGES, InquiryMessage } from "./admin-mock-data";
 import { useAdmin } from "./AdminLayoutShell";
+import { InquiryRecord } from "@/lib/db-server";
+
+type StatusFilter = "ALL" | "UNREAD" | "READ" | "REPLIED" | "ARCHIVED";
+
+const STATUS_CONFIG: Record<
+  NonNullable<InquiryRecord["status"]>,
+  { label: string; badgeClass: string; dotClass: string }
+> = {
+  UNREAD: {
+    label: "UNREAD",
+    badgeClass: "bg-[#EAD8D3] text-[#4A3B36] border-[#D8C5BD]",
+    dotClass: "bg-[#B3877F]",
+  },
+  READ: {
+    label: "READ",
+    badgeClass: "bg-[#F2E8E3] text-[#5D4A44] border-[#E5D5C5]",
+    dotClass: "bg-[#7D6B64]",
+  },
+  REPLIED: {
+    label: "REPLIED",
+    badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    dotClass: "bg-emerald-500",
+  },
+  ARCHIVED: {
+    label: "ARCHIVED",
+    badgeClass: "bg-slate-100 text-slate-600 border-slate-200",
+    dotClass: "bg-slate-400",
+  },
+};
 
 export function MessagesInbox() {
-  const { showToast } = useAdmin();
-  const [messages, setMessages] = useState<InquiryMessage[]>(INITIAL_MESSAGES);
-  const [activeMessageId, setActiveMessageId] = useState<string>(
-    INITIAL_MESSAGES[0].id
-  );
-  const [filterType, setFilterType] = useState<"ALL" | "UNREAD" | "STARRED">("ALL");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [replyText, setReplyText] = useState("");
+  const { showToast, refreshStats } = useAdmin();
+  const [messages, setMessages] = useState<InquiryRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
+  const [selectedMessage, setSelectedMessage] = useState<InquiryRecord | null>(null);
+  const [messageToDelete, setMessageToDelete] = useState<InquiryRecord | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [errorState, setErrorState] = useState(false);
 
-  const activeMessage =
-    messages.find((m) => m.id === activeMessageId) || messages[0];
-
-  const filteredMessages = messages.filter((m) => {
-    if (filterType === "UNREAD" && !m.isUnread) return false;
-    if (filterType === "STARRED" && !m.isStarred) return false;
-    if (searchQuery.trim() !== "") {
-      const q = searchQuery.toLowerCase();
-      return (
-        m.senderName.toLowerCase().includes(q) ||
-        m.subject.toLowerCase().includes(q) ||
-        m.snippet.toLowerCase().includes(q)
-      );
+  const fetchMessages = async () => {
+    setLoading(true);
+    setErrorState(false);
+    try {
+      const res = await fetch("/api/admin/messages");
+      if (!res.ok) {
+        setErrorState(true);
+        if (res.status === 401 || res.status === 403) {
+          showToast(
+            "Session Notice",
+            "Your executive session may have expired. Please refresh or sign in again.",
+            "error"
+          );
+        } else {
+          showToast("Notice", "Unable to load enquiries right now. Please try again.", "error");
+        }
+        return;
+      }
+      const data = await res.json();
+      setMessages(data.messages || []);
+    } catch (err: any) {
+      console.error("Fetch messages error:", err);
+      setErrorState(true);
+    } finally {
+      setLoading(false);
     }
-    return true;
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  // Auto-mark as READ when opening a message
+  const openMessage = async (msg: InquiryRecord) => {
+    setSelectedMessage(msg);
+    if (msg.status === "UNREAD") {
+      await handleUpdateStatus(msg.id, "READ", true);
+    }
+  };
+
+  const handleUpdateStatus = async (
+    id: string,
+    status: InquiryRecord["status"],
+    silent = false
+  ) => {
+    try {
+      const res = await fetch(`/api/admin/messages/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) {
+        if (!silent)
+          showToast("Error", "Failed to update status. Please try again.", "error");
+        return;
+      }
+
+      setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
+      if (selectedMessage && selectedMessage.id === id) {
+        setSelectedMessage((prev) => (prev ? { ...prev, status } : null));
+      }
+      if (!silent) {
+        showToast("Updated", `Enquiry marked as ${status}.`, "success");
+        refreshStats();
+      } else {
+        refreshStats();
+      }
+    } catch (err: any) {
+      if (!silent)
+        showToast("Error", "Failed to update status. Please try again.", "error");
+    }
+  };
+
+  const handleDeleteMessage = async () => {
+    if (!messageToDelete) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/messages/${messageToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        showToast("Error", errData.error || "Failed to delete enquiry.", "error");
+        return;
+      }
+
+      setMessages((prev) => prev.filter((m) => m.id !== messageToDelete.id));
+      if (selectedMessage?.id === messageToDelete.id) {
+        setSelectedMessage(null);
+      }
+      showToast(
+        "Deleted",
+        `Enquiry from ${messageToDelete.name} has been permanently deleted.`,
+        "success"
+      );
+      setMessageToDelete(null);
+      refreshStats();
+    } catch (err: any) {
+      showToast("Error", "Failed to delete enquiry. Please try again.", "error");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Client-side filtering (data set is small enough)
+  const filteredMessages = messages.filter((m) => {
+    const matchesStatus =
+      statusFilter === "ALL" || m.status === statusFilter;
+    if (!search) return matchesStatus;
+    const q = search.toLowerCase();
+    const matchesSearch =
+      m.name.toLowerCase().includes(q) ||
+      m.email.toLowerCase().includes(q) ||
+      (m.phone || "").toLowerCase().includes(q) ||
+      (m.subject || "").toLowerCase().includes(q) ||
+      m.message.toLowerCase().includes(q);
+    return matchesStatus && matchesSearch;
   });
 
-  const toggleStar = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, isStarred: !m.isStarred } : m))
-    );
-  };
-
-  const handleSelectMessage = (id: string) => {
-    setActiveMessageId(id);
-    setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, isUnread: false } : m))
-    );
-  };
-
-  const handleSendReply = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!replyText.trim() || !activeMessage) return;
-
-    const newReply = {
-      sender: "Dilkhush Kumar (Principal Administrator)",
-      text: replyText.trim(),
-      timestamp: "Just now",
-      isAdmin: true,
-    };
-
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === activeMessage.id
-          ? { ...m, replies: [...(m.replies || []), newReply] }
-          : m
-      )
-    );
-
-    setReplyText("");
-    showToast(
-      "Reply Dispatched",
-      `Private email consultation sent to ${activeMessage.senderEmail}.`
-    );
-  };
-
-  const handleApplyTemplate = (template: string) => {
-    setReplyText(template);
-  };
+  const unreadCount = messages.filter((m) => m.status === "UNREAD").length;
 
   return (
     <div className="space-y-6">
       {/* 1. HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-[#1E232E]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E5D5C5]">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold font-serif text-white tracking-wide">
-            Inquiries &amp; Messaging
+          <div className="flex items-center gap-2">
+            <MessageSquare className="w-4 h-4 text-[#B3877F]" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#B3877F] font-bold">
+              CLIENT ENQUIRY INBOX
+            </span>
+            {unreadCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAD8D3] text-[#4A3B36] border border-[#D8C5BD]">
+                {unreadCount} unread
+              </span>
+            )}
+          </div>
+          <h2 className="font-serif text-2xl font-bold text-[#1C1614] mt-1">
+            Contact Enquiries &amp; Messages
           </h2>
-          <p className="text-xs text-gray-400 font-sans mt-0.5">
-            Direct client communications, architectural design briefs, and confidential memos.
+          <p className="text-xs text-[#5D4A44] mt-0.5">
+            All contact form submissions and private inquiry messages from the website.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono px-3 py-1 rounded-full bg-[#161B23] border border-[#262F3F] text-gray-300">
-            {messages.filter((m) => m.isUnread).length} Unread Inquiries
+        <button
+          type="button"
+          onClick={fetchMessages}
+          className="px-3.5 py-2 rounded-xl bg-[#F7F2EA] hover:bg-[#F2E8E3] text-[#4A3B36] text-xs font-semibold border border-[#E5D5C5] flex items-center gap-2 transition-all cursor-pointer shadow-sm self-start sm:self-auto"
+        >
+          <RefreshCw
+            className={`w-3.5 h-3.5 ${loading ? "animate-spin text-[#B3877F]" : "text-[#B3877F]"}`}
+          />
+          <span>Sync Inbox</span>
+        </button>
+      </div>
+
+      {/* 2. SEARCH + FILTER TOOLBAR */}
+      <div className="p-4 rounded-2xl bg-[#F7F2EA] border border-[#E5D5C5] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="relative flex-1 w-full max-w-md">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7D6B64]" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, email, phone, subject..."
+            className="w-full bg-[#FDFBF7] border border-[#E5D5C5] rounded-xl pl-10 pr-4 py-2 text-xs text-[#1C1614] placeholder-[#7D6B64] outline-none focus:border-[#B3877F] transition-all"
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Filter className="w-3.5 h-3.5 text-[#7D6B64]" />
+            <span className="text-[10px] font-mono text-[#7D6B64] uppercase">Filter:</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+              className="bg-[#FDFBF7] border border-[#E5D5C5] text-[#1C1614] text-xs rounded-xl px-3 py-1.5 outline-none focus:border-[#B3877F] cursor-pointer"
+            >
+              <option value="ALL">All Enquiries</option>
+              <option value="UNREAD">Unread</option>
+              <option value="READ">Read</option>
+              <option value="REPLIED">Replied</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+          </div>
+
+          <span className="text-xs font-mono text-[#7D6B64]">
+            {filteredMessages.length}{" "}
+            {filteredMessages.length === 1 ? "enquiry" : "enquiries"}
           </span>
         </div>
       </div>
 
-      {/* 2. SPLIT INBOX VIEW */}
-      <div className="bg-[#12161F] border border-[#1E2533] rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
-        {/* LEFT COLUMN: MESSAGE LIST */}
-        <div className="lg:col-span-5 border-r border-[#1E2533] flex flex-col bg-[#0F1217]">
-          {/* SEARCH & FILTERS */}
-          <div className="p-3.5 border-b border-[#1E2533] space-y-2.5">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search messages..."
-                className="w-full bg-[#181E29] border border-[#263143] rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
-              />
+      {/* 3. MESSAGES LIST */}
+      <div className="rounded-2xl bg-[#F7F2EA] border border-[#E5D5C5] overflow-hidden shadow-sm">
+        {loading ? (
+          <div className="py-20 text-center text-xs text-[#7D6B64] font-mono">
+            Loading enquiries from database...
+          </div>
+        ) : errorState ? (
+          <div className="py-16 px-4 text-center space-y-3">
+            <div className="w-12 h-12 mx-auto rounded-full bg-[#EAD8D3] border border-[#D8C5BD] flex items-center justify-center">
+              <AlertCircle className="w-6 h-6 text-[#B3877F]" />
             </div>
-
-            <div className="flex items-center gap-1.5">
-              {(["ALL", "UNREAD", "STARRED"] as const).map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setFilterType(type)}
-                  className={`text-[10px] font-mono px-2.5 py-1 rounded-lg transition-all font-bold ${
-                    filterType === type
-                      ? "bg-[#252E3E] text-white border border-[#3A4860]"
-                      : "text-gray-400 hover:text-white"
+            <div>
+              <p className="text-base font-bold text-[#1C1614]">Unable to Load Enquiries</p>
+              <p className="text-xs text-[#7D6B64] mt-1 max-w-sm mx-auto">
+                There was a problem connecting to the database. Please try again.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={fetchMessages}
+              className="px-4 py-2 rounded-xl bg-[#1C1614] hover:bg-[#2D2326] text-[#FDFBF7] text-xs font-bold transition-all shadow-md inline-flex items-center gap-2 cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-[#B3877F]" />
+              <span>Retry</span>
+            </button>
+          </div>
+        ) : filteredMessages.length === 0 ? (
+          <div className="py-20 text-center space-y-3">
+            <div className="w-14 h-14 mx-auto rounded-full bg-[#F2E8E3] border border-[#E5D5C5] flex items-center justify-center">
+              <MessageSquare className="w-7 h-7 text-[#B3877F]" />
+            </div>
+            <div>
+              <p className="text-base font-bold text-[#1C1614]">
+                {search || statusFilter !== "ALL" ? "No matching enquiries" : "Inbox is empty"}
+              </p>
+              <p className="text-xs text-[#7D6B64] mt-1 max-w-sm mx-auto">
+                {search || statusFilter !== "ALL"
+                  ? "Try adjusting your search or filter."
+                  : "Contact form submissions will appear here automatically."}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="divide-y divide-[#E5D5C5]">
+            {filteredMessages.map((msg) => {
+              const statusCfg = STATUS_CONFIG[msg.status] || STATUS_CONFIG.UNREAD;
+              return (
+                <div
+                  key={msg.id}
+                  className={`p-5 hover:bg-[#F2E8E3] transition-colors group ${
+                    msg.status === "UNREAD" ? "bg-[#FDFBF7]" : ""
                   }`}
                 >
-                  {type}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* MESSAGE LIST ITEMS */}
-          <div className="flex-1 overflow-y-auto divide-y divide-[#181E29]">
-            {filteredMessages.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 text-xs">
-                No messages found.
-              </div>
-            ) : (
-              filteredMessages.map((msg) => {
-                const isActive = msg.id === activeMessageId;
-
-                return (
-                  <div
-                    key={msg.id}
-                    onClick={() => handleSelectMessage(msg.id)}
-                    className={`p-3.5 cursor-pointer transition-all ${
-                      isActive
-                        ? "bg-[#181F2C] border-l-2 border-[#D4AF37]"
-                        : "hover:bg-[#141822]"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2 min-w-0">
-                        {msg.isUnread && (
-                          <span className="w-2 h-2 rounded-full bg-[#D4AF37] flex-shrink-0" />
-                        )}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    {/* Left: Message Info */}
+                    <div
+                      className="space-y-1 min-w-0 flex-1 cursor-pointer"
+                      onClick={() => openMessage(msg)}
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-serif font-bold text-sm text-[#1C1614]">
+                          {msg.name}
+                        </span>
                         <span
-                          className={`text-xs truncate ${
-                            msg.isUnread
-                              ? "font-bold text-white"
-                              : "font-semibold text-gray-300"
-                          }`}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold border ${statusCfg.badgeClass}`}
                         >
-                          {msg.senderName}
+                          <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dotClass}`} />
+                          {statusCfg.label}
+                        </span>
+                        <span className="text-[10px] font-mono text-[#7D6B64]">
+                          {msg.email}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-mono text-gray-400">
-                          {msg.timestamp}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={(e) => toggleStar(e, msg.id)}
-                          className={`p-0.5 ${
-                            msg.isStarred
-                              ? "text-amber-400"
-                              : "text-gray-600 hover:text-gray-400"
-                          }`}
-                        >
-                          <Star className="w-3 h-3 fill-current" />
-                        </button>
-                      </div>
+                      <p className="text-xs font-semibold text-[#4A3B36] truncate">
+                        {msg.subject || "General Consultation Inquiry"}
+                      </p>
+                      <p className="text-xs text-[#7D6B64] truncate max-w-2xl">
+                        {msg.message}
+                      </p>
                     </div>
 
-                    <h4 className="text-[11px] font-medium text-gray-200 truncate">
-                      {msg.subject}
-                    </h4>
-                    <p className="text-[10px] text-gray-400 truncate mt-0.5 font-sans">
-                      {msg.snippet}
-                    </p>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
+                    {/* Right: Date + Actions */}
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                      <span className="text-[10px] font-mono text-[#7D6B64]">
+                        {new Date(msg.createdAt).toLocaleDateString()}
+                      </span>
 
-        {/* RIGHT COLUMN: READING PANE & REPLY COMPOSER */}
-        <div className="lg:col-span-7 flex flex-col bg-[#12161F]">
-          {activeMessage ? (
-            <>
-              {/* MESSAGE HEADER */}
-              <div className="p-4 sm:p-5 border-b border-[#1E2533] bg-[#0E1117] flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#1E2533] to-[#2E394E] border border-[#3E4C66] text-[#D4AF37] font-mono text-xs font-bold flex items-center justify-center flex-shrink-0">
-                    {activeMessage.senderAvatar}
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-bold text-white font-serif">
-                      {activeMessage.subject}
-                    </h3>
-                    <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-gray-400 font-mono">
-                      <span>From: {activeMessage.senderName}</span>
-                      <span>•</span>
-                      <a
-                        href={`mailto:${activeMessage.senderEmail}`}
-                        className="text-[#D4AF37] hover:underline"
+                      {/* View button */}
+                      <button
+                        type="button"
+                        title="View Full Enquiry"
+                        onClick={() => openMessage(msg)}
+                        className="p-1.5 rounded-lg bg-[#FDFBF7] hover:bg-[#F2E8E3] border border-[#E5D5C5] text-[#4A3B36] transition-colors cursor-pointer"
                       >
-                        {activeMessage.senderEmail}
-                      </a>
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+
+                      {/* Toggle read/unread */}
+                      <button
+                        type="button"
+                        title={msg.status === "UNREAD" ? "Mark as Read" : "Mark as Unread"}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateStatus(
+                            msg.id,
+                            msg.status === "UNREAD" ? "READ" : "UNREAD"
+                          );
+                        }}
+                        className="p-1.5 rounded-lg bg-[#FDFBF7] hover:bg-[#F2E8E3] border border-[#E5D5C5] text-[#4A3B36] text-[11px] font-mono transition-colors cursor-pointer"
+                      >
+                        {msg.status === "UNREAD" ? "Mark Read" : "Mark Unread"}
+                      </button>
+
+                      {/* Delete button */}
+                      <button
+                        type="button"
+                        title="Delete Enquiry"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMessageToDelete(msg);
+                        }}
+                        className="p-1.5 rounded-lg bg-[#FDFBF7] hover:bg-red-50 border border-[#E5D5C5] text-[#7D6B64] hover:text-red-500 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
-                <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-[#1A212E] text-gray-300 border border-[#2B364A] flex-shrink-0">
-                  {activeMessage.service}
+      {/* 4. MESSAGE DETAIL MODAL */}
+      {selectedMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-[#F7F2EA] border border-[#E5D5C5] rounded-2xl max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-start justify-between pb-4 border-b border-[#E5D5C5]">
+              <div className="min-w-0">
+                <span className="text-[10px] font-mono uppercase text-[#B3877F] font-bold block">
+                  ENQUIRY DETAILS — {selectedMessage.id}
                 </span>
+                <h3 className="font-serif text-xl font-bold text-[#1C1614] mt-0.5">
+                  {selectedMessage.name}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedMessage(null)}
+                className="p-2 rounded-xl bg-[#F2E8E3] text-[#7D6B64] hover:text-[#1C1614] shrink-0 ml-4"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Contact Info */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 rounded-xl bg-[#FDFBF7] border border-[#E5D5C5] space-y-1">
+                <span className="text-[10px] font-mono text-[#7D6B64] uppercase block">Email Address</span>
+                <a
+                  href={`mailto:${selectedMessage.email}`}
+                  className="font-bold text-[#1C1614] hover:text-[#B3877F] transition-colors block truncate"
+                >
+                  {selectedMessage.email}
+                </a>
               </div>
 
-              {/* MESSAGE CONTENT & REPLIES */}
-              <div className="flex-1 p-5 overflow-y-auto space-y-4">
-                {/* ORIGINAL MESSAGE */}
-                <div className="bg-[#161B24] border border-[#232B3A] rounded-2xl p-4 space-y-3">
-                  <div className="flex items-center justify-between text-[10px] font-mono text-gray-400 pb-2 border-b border-[#232B3A]">
-                    <span>Original Client Inquiry</span>
-                    <span>{activeMessage.timestamp}</span>
-                  </div>
-                  <p className="text-xs text-gray-200 leading-relaxed whitespace-pre-line font-sans">
-                    {activeMessage.fullMessage}
-                  </p>
-                </div>
-
-                {/* THREAD REPLIES */}
-                {activeMessage.replies && activeMessage.replies.length > 0 && (
-                  <div className="space-y-3 pt-2">
-                    {activeMessage.replies.map((rep, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-[#1A2230] border border-[#2E3C54] rounded-2xl p-4 space-y-2 ml-4"
-                      >
-                        <div className="flex items-center justify-between text-[10px] font-mono text-[#D4AF37]">
-                          <span className="font-bold">{rep.sender}</span>
-                          <span className="text-gray-400">{rep.timestamp}</span>
-                        </div>
-                        <p className="text-xs text-gray-200 leading-relaxed font-sans">
-                          {rep.text}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+              <div className="p-3 rounded-xl bg-[#FDFBF7] border border-[#E5D5C5] space-y-1">
+                <span className="text-[10px] font-mono text-[#7D6B64] uppercase block">Phone Number</span>
+                {selectedMessage.phone ? (
+                  <a
+                    href={`tel:${selectedMessage.phone}`}
+                    className="font-mono font-bold text-[#1C1614] hover:text-[#B3877F] transition-colors block"
+                  >
+                    {selectedMessage.phone}
+                  </a>
+                ) : (
+                  <span className="text-[#7D6B64] italic">Not provided</span>
                 )}
               </div>
 
-              {/* QUICK TEMPLATES & REPLY COMPOSER */}
-              <div className="p-4 border-t border-[#1E2533] bg-[#0E1117] space-y-3">
-                {/* QUICK ACTION TEMPLATES */}
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] font-mono text-gray-500 mr-1">
-                    Quick Templates:
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleApplyTemplate(
-                        "Dear " +
-                          activeMessage.senderName +
-                          ",\n\nThank you for reaching out to PAIMA Architectural Studio. We would be delighted to schedule a private on-site consultation to review your property and spatial vision.\n\nCould you confirm your preferred schedule for next week?\n\nWarm regards,\nDilkhush Kumar"
-                      )
-                    }
-                    className="text-[10px] font-mono px-2 py-1 rounded-lg bg-[#181E29] hover:bg-[#222A3A] text-gray-300 hover:text-white border border-[#263143] transition-colors"
-                  >
-                    Schedule Consultation
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleApplyTemplate(
-                        "Dear " +
-                          activeMessage.senderName +
-                          ",\n\nWe have received your design brief and our architecture team is reviewing the floor plans and zoning requirements. We will revert with our preliminary concept storyboard shortly.\n\nBest regards,\nDilkhush Kumar"
-                      )
-                    }
-                    className="text-[10px] font-mono px-2 py-1 rounded-lg bg-[#181E29] hover:bg-[#222A3A] text-gray-300 hover:text-white border border-[#263143] transition-colors"
-                  >
-                    Send Concept Review
-                  </button>
-                </div>
-
-                {/* REPLY FORM */}
-                <form onSubmit={handleSendReply} className="space-y-2">
-                  <textarea
-                    rows={3}
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Compose confidential response to client..."
-                    className="w-full bg-[#161B24] border border-[#263143] rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
-                  />
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-gray-500">
-                      Dispatched via studio encrypted gateway (UI Simulation)
-                    </span>
-                    <button
-                      type="submit"
-                      className="bg-gradient-to-r from-[#D4AF37] to-[#B38F2B] hover:from-[#E5C358] hover:to-[#C29E37] text-black font-bold text-xs px-4 py-2 rounded-xl shadow flex items-center gap-1.5 transition-all font-sans"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Send Reply</span>
-                    </button>
-                  </div>
-                </form>
+              <div className="p-3 rounded-xl bg-[#FDFBF7] border border-[#E5D5C5] space-y-1">
+                <span className="text-[10px] font-mono text-[#7D6B64] uppercase block">Received</span>
+                <span className="font-mono text-[#1C1614]">
+                  {new Date(selectedMessage.createdAt).toLocaleString()}
+                </span>
               </div>
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center p-8 text-center text-gray-500 text-xs">
-              Select an inquiry from the inbox to read and respond.
+
+              <div className="p-3 rounded-xl bg-[#FDFBF7] border border-[#E5D5C5] space-y-1">
+                <span className="text-[10px] font-mono text-[#7D6B64] uppercase block">Status</span>
+                <div className="flex items-center gap-1.5">
+                  {(() => {
+                    const cfg = STATUS_CONFIG[selectedMessage.status] || STATUS_CONFIG.UNREAD;
+                    return (
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${cfg.badgeClass}`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dotClass}`} />
+                        {cfg.label}
+                      </span>
+                    );
+                  })()}
+                </div>
+              </div>
             </div>
-          )}
+
+            {/* Subject */}
+            {selectedMessage.subject && (
+              <div className="p-3 rounded-xl bg-[#FDFBF7] border border-[#E5D5C5] space-y-1 text-xs">
+                <span className="text-[10px] font-mono text-[#7D6B64] uppercase block">Subject</span>
+                <p className="font-bold text-[#1C1614]">{selectedMessage.subject}</p>
+              </div>
+            )}
+
+            {/* Message */}
+            <div className="p-4 rounded-xl bg-[#FDFBF7] border border-[#E5D5C5] space-y-2">
+              <span className="text-[10px] font-mono uppercase text-[#7D6B64] block font-bold">
+                Message Content
+              </span>
+              <p className="text-xs text-[#1C1614] leading-relaxed whitespace-pre-wrap">
+                {selectedMessage.message}
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E5D5C5]">
+              <div className="flex flex-wrap items-center gap-2">
+                <a
+                  href={`mailto:${selectedMessage.email}?subject=RE: ${encodeURIComponent(
+                    selectedMessage.subject || "PAIMA Consultation Enquiry"
+                  )}`}
+                  className="px-4 py-2 rounded-xl bg-[#1C1614] text-[#FDFBF7] text-xs font-bold shadow-md hover:bg-[#2D2326] flex items-center gap-2 transition-all"
+                >
+                  <Reply className="w-3.5 h-3.5" />
+                  <span>Reply via Email</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleUpdateStatus(
+                      selectedMessage.id,
+                      selectedMessage.status === "UNREAD" ? "READ" : "UNREAD"
+                    )
+                  }
+                  className="px-4 py-2 rounded-xl bg-[#F7F2EA] hover:bg-[#F2E8E3] border border-[#E5D5C5] text-[#1C1614] text-xs font-bold transition-all"
+                >
+                  {selectedMessage.status === "UNREAD" ? "Mark as Read" : "Mark as Unread"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedMessage(null);
+                    setMessageToDelete(selectedMessage);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 text-xs font-bold flex items-center gap-2 transition-all"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete</span>
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedMessage(null)}
+                className="px-4 py-2 rounded-xl bg-[#FDFBF7] hover:bg-[#F2E8E3] border border-[#E5D5C5] text-[#1C1614] text-xs font-bold transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* 5. DELETE CONFIRMATION MODAL */}
+      {messageToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-[#FDFBF7] border border-red-200 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl text-center">
+            <div className="w-12 h-12 mx-auto rounded-full bg-red-50 border border-red-100 flex items-center justify-center">
+              <Trash2 className="w-6 h-6 text-red-500" />
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="font-serif text-lg font-bold text-[#1C1614]">
+                Delete This Enquiry?
+              </h4>
+              <p className="text-xs text-[#5D4A44] leading-relaxed">
+                Are you sure you want to permanently delete the enquiry from{" "}
+                <strong className="text-[#4A3B36]">{messageToDelete.name}</strong> (
+                {messageToDelete.email})?
+                <br />
+                <span className="text-red-600 font-bold">This action cannot be undone.</span>
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setMessageToDelete(null)}
+                disabled={deleting}
+                className="px-5 py-2.5 rounded-xl bg-[#F7F2EA] hover:bg-[#F2E8E3] border border-[#E5D5C5] text-[#1C1614] text-xs font-bold transition-all disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteMessage}
+                disabled={deleting}
+                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md flex items-center gap-2 transition-all disabled:opacity-50"
+              >
+                {deleting ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Confirm Delete</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
