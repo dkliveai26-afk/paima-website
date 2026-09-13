@@ -2,6 +2,7 @@ import React from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/animations/SmoothScroll";
+import PaimaConcierge from "@/components/ui/PaimaConcierge";
 
 export default function PublicLayout({
   children,
@@ -21,6 +22,7 @@ export default function PublicLayout({
         {children}
       </main>
       <Footer />
+      <PaimaConcierge />
     </SmoothScroll>
   );
 }
