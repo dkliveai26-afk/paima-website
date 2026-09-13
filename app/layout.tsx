@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
-import { constructMetadata, generateLocalBusinessSchema } from "@/lib/seo";
+import {
+  constructMetadata,
+  generateOrganizationSchema,
+  generateLocalBusinessSchema,
+  generateWebSiteSchema,
+} from "@/lib/seo";
+import { WelcomeEmailTrigger } from "@/components/auth/WelcomeEmailTrigger";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -17,9 +23,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = constructMetadata({
-  title: "Paima | Haute Architecture & Luxury Real Estate",
+  title: "Paima | Luxury Interior Design, Architecture & Prime Real Estate",
   description:
-    "Award-winning interior architecture and prime real estate studio orchestrating private residences, collector estates, and luxury penthouses across Paris, New York, Monaco, and Los Angeles.",
+    "Award-winning haute interior architecture and luxury interior design studio orchestrating bespoke residential interiors, private estates, and luxury penthouses in Kolkata, India, and premier global locations.",
   path: "/",
 });
 
@@ -28,18 +34,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const schemaMarkup = generateLocalBusinessSchema();
+  const orgSchema = generateOrganizationSchema();
+  const localBusinessSchema = generateLocalBusinessSchema();
+  const websiteSchema = generateWebSiteSchema();
 
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
       <body className="font-sans antialiased bg-[#E1D4C2] text-black selection:bg-black selection:text-[#E1D4C2]">
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider>
+          <WelcomeEmailTrigger />
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );

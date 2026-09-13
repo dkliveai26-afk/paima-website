@@ -1,9 +1,49 @@
 "use client";
 
 import React, { useState } from "react";
-import { Check, Send, AlertCircle, Calendar, Clock } from "lucide-react";
+import { Check, Send, AlertCircle, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GoogleAddressAutocomplete } from "@/components/ui/GoogleAddressAutocomplete";
+
+function playSuccessSound() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    if (ctx.state === "suspended") {
+      ctx.resume();
+    }
+
+    const now = ctx.currentTime;
+
+    // Dual-tone harmonic chime (E5: 659.25Hz -> G#5: 830.61Hz)
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.type = "sine";
+    osc2.type = "sine";
+
+    osc1.frequency.setValueAtTime(659.25, now);
+    osc2.frequency.setValueAtTime(830.61, now + 0.08);
+
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.12, now + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.75);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.start(now);
+    osc2.start(now + 0.08);
+
+    osc1.stop(now + 0.75);
+    osc2.stop(now + 0.75);
+  } catch {
+    // Non-fatal if audio context is blocked
+  }
+}
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -14,7 +54,6 @@ export function ContactForm() {
     budget: "$250,000 – $500,000",
     location: "",
     preferredDate: "",
-    preferredTime: "10:00 AM",
     message: "",
   });
 
@@ -40,7 +79,6 @@ export function ContactForm() {
           budget: formData.budget,
           location: formData.location,
           preferredDate: formData.preferredDate,
-          preferredTime: formData.preferredTime,
           projectDetails: formData.message,
           message: formData.message,
         }),
@@ -54,6 +92,7 @@ export function ContactForm() {
 
       setBookingId(data.bookingId);
       setSubmitted(true);
+      playSuccessSound();
     } catch (err: any) {
       setErrorMessage(err.message || "An unexpected error occurred. Please try again.");
     } finally {
@@ -74,14 +113,6 @@ export function ContactForm() {
     "$250,000 – $500,000",
     "$500,000 – $1,000,000",
     "$1,000,000+",
-  ];
-
-  const timeOptions = [
-    "09:00 AM",
-    "10:00 AM",
-    "11:30 AM",
-    "02:00 PM",
-    "04:00 PM",
   ];
 
   if (submitted) {
@@ -126,7 +157,6 @@ export function ContactForm() {
               budget: "$250,000 – $500,000",
               location: "",
               preferredDate: "",
-              preferredTime: "10:00 AM",
               message: "",
             });
           }}
@@ -207,40 +237,19 @@ export function ContactForm() {
         </div>
       </div>
 
-      {/* Preferred Consultation Date & Time */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label htmlFor="contact-date" className="text-[10px] uppercase font-sans tracking-[0.18em] text-black font-extrabold flex items-center gap-1.5">
-            <Calendar className="w-3 h-3 text-black" />
-            <span>Preferred Date</span>
-          </label>
-          <input
-            type="date"
-            id="contact-date"
-            value={formData.preferredDate}
-            onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-            className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="contact-time" className="text-[10px] uppercase font-sans tracking-[0.18em] text-black font-extrabold flex items-center gap-1.5">
-            <Clock className="w-3 h-3 text-black" />
-            <span>Preferred Time Slot</span>
-          </label>
-          <select
-            id="contact-time"
-            value={formData.preferredTime}
-            onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
-            className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold cursor-pointer"
-          >
-            {timeOptions.map((t) => (
-              <option key={t} value={t} className="bg-[#E1D4C2] text-black font-bold">
-                {t}
-              </option>
-            ))}
-          </select>
-        </div>
+      {/* Preferred Consultation Date */}
+      <div className="space-y-2">
+        <label htmlFor="contact-date" className="text-[10px] uppercase font-sans tracking-[0.18em] text-black font-extrabold flex items-center gap-1.5">
+          <Calendar className="w-3 h-3 text-black" />
+          <span>Preferred Date</span>
+        </label>
+        <input
+          type="date"
+          id="contact-date"
+          value={formData.preferredDate}
+          onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
+          className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold"
+        />
       </div>
 
       {/* Project Typology */}
@@ -266,7 +275,7 @@ export function ContactForm() {
         <label className="text-[10px] font-sans uppercase tracking-[0.18em] text-black font-extrabold block">
           Anticipated Investment Allocation
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {budgetRanges.map((b) => (
             <button
               type="button"

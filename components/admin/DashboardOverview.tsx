@@ -474,9 +474,6 @@ export function DashboardOverview() {
                       <p className="text-[11px] font-mono font-bold text-[#4A3B36]">
                         {c.preferredDate}
                       </p>
-                      <p className="text-[10px] font-mono text-[#7D6B64]">
-                        {c.preferredTime || "10:00 AM"}
-                      </p>
                     </div>
                   </div>
                 ))}

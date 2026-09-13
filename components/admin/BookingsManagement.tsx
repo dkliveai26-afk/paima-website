@@ -22,6 +22,7 @@ import {
   User,
   ExternalLink,
   RefreshCw,
+  FileSpreadsheet,
 } from "lucide-react";
 import { useAdmin } from "./AdminLayoutShell";
 import { BookingRecord, BookingStatus } from "@/lib/db-server";
@@ -61,6 +62,7 @@ export function BookingsManagement() {
   const { showToast, refreshStats } = useAdmin();
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<string>("newest");
@@ -77,7 +79,6 @@ export function BookingsManagement() {
     budget: "$250,000 – $500,000",
     location: "",
     preferredDate: "",
-    preferredTime: "10:00 AM",
     projectDetails: "",
     isVip: false,
   });
@@ -116,6 +117,43 @@ export function BookingsManagement() {
   useEffect(() => {
     fetchBookings();
   }, [search, statusFilter, sortBy]);
+
+  const handleExportExcel = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const url = new URL("/api/admin/bookings/export", window.location.origin);
+      if (search) url.searchParams.set("search", search);
+      if (statusFilter !== "ALL") url.searchParams.set("status", statusFilter);
+      if (sortBy) url.searchParams.set("sort", sortBy);
+
+      const res = await fetch(url.toString());
+      if (!res.ok) {
+        showToast("Export Error", "Failed to download Excel export.", "error");
+        return;
+      }
+
+      const blob = await res.blob();
+      const today = new Date().toISOString().split("T")[0];
+      const filename = `PAIMA-Bookings-${today}.xlsx`;
+
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+
+      showToast("Export Complete", `Exported booking records to ${filename}`, "success");
+    } catch (err: any) {
+      console.error("Export error:", err);
+      showToast("Export Error", "An error occurred during Excel export.", "error");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const handleStatusChange = async (bookingId: string, newStatus: BookingStatus) => {
     try {
@@ -192,7 +230,6 @@ export function BookingsManagement() {
         budget: "$250,000 – $500,000",
         location: "",
         preferredDate: "",
-        preferredTime: "10:00 AM",
         projectDetails: "",
         isVip: false,
       });
@@ -230,6 +267,16 @@ export function BookingsManagement() {
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-[#B3877F]" : "text-[#B3877F]"}`} />
             <span>Sync</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            disabled={exporting}
+            className="px-3.5 py-2 rounded-xl bg-[#F7F2EA] hover:bg-[#F2E8E3] text-[#4A3B36] text-xs font-semibold border border-[#E5D5C5] flex items-center gap-2 transition-all cursor-pointer shadow-sm disabled:opacity-50"
+          >
+            <FileSpreadsheet className={`w-3.5 h-3.5 ${exporting ? "animate-spin text-[#B3877F]" : "text-[#B3877F]"}`} />
+            <span>{exporting ? "Exporting..." : "Export Excel"}</span>
           </button>
 
           <button
@@ -389,7 +436,6 @@ export function BookingsManagement() {
                       {/* Schedule */}
                       <td className="p-4 font-mono text-[11px] text-[#5D4A44]">
                         <p className="text-[#1C1614]">{b.preferredDate || "Not Specified"}</p>
-                        <p className="text-[10px] text-[#7D6B64]">{b.preferredTime || ""}</p>
                       </td>
 
                       {/* Status */}
@@ -496,10 +542,10 @@ export function BookingsManagement() {
 
               <div className="p-3 rounded-xl bg-[#FDFBF7] border border-[#E5D5C5] space-y-1 sm:col-span-2">
                 <span className="text-[10px] font-mono text-[#7D6B64] uppercase">
-                  Preferred Consultation Slot
+                  Preferred Consultation Date
                 </span>
                 <p className="font-mono text-[#1C1614]">
-                  {selectedBooking.preferredDate} at {selectedBooking.preferredTime || "10:00 AM"}
+                  {selectedBooking.preferredDate || "Flexible Date"}
                 </p>
               </div>
             </div>
@@ -683,17 +729,6 @@ export function BookingsManagement() {
                     value={newForm.preferredDate}
                     onChange={(e) => setNewForm({ ...newForm, preferredDate: e.target.value })}
                     className="w-full bg-[#FDFBF7] border border-[#E5D5C5] rounded-xl px-3 py-2 text-[#1C1614] outline-none focus:border-[#B3877F]"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-mono uppercase text-[#7D6B64]">Preferred Time</label>
-                  <input
-                    type="text"
-                    value={newForm.preferredTime}
-                    onChange={(e) => setNewForm({ ...newForm, preferredTime: e.target.value })}
-                    className="w-full bg-[#FDFBF7] border border-[#E5D5C5] rounded-xl px-3 py-2 text-[#1C1614] outline-none focus:border-[#B3877F]"
-                    placeholder="10:00 AM EST"
                   />
                 </div>
               </div>

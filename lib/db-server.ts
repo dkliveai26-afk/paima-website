@@ -20,9 +20,37 @@ export type {
   DashboardStats,
 } from "./types";
 
+export const VALID_BOOKING_STATUSES: BookingStatus[] = [
+  "NEW",
+  "CONTACTED",
+  "CONFIRMED",
+  "COMPLETED",
+  "CANCELLED",
+];
+
 export function generateBookingId(): string {
-  const randomNum = Math.floor(10000 + Math.random() * 90000);
-  return `PAIMA-BK-${randomNum}`;
+  const timePart = Date.now().toString(36).toUpperCase();
+  const randPart = Math.floor(1000 + Math.random() * 9000);
+  return `PAIMA-BK-${timePart}-${randPart}`;
+}
+
+let indexesEnsured = false;
+async function ensureDbIndexes(db: any) {
+  if (indexesEnsured) return;
+  try {
+    await Promise.all([
+      db.collection("bookings").createIndex({ bookingId: 1 }, { unique: true }),
+      db.collection("bookings").createIndex({ createdAt: -1 }),
+      db.collection("bookings").createIndex({ status: 1 }),
+      db.collection("bookings").createIndex({ email: 1 }),
+      db.collection("messages").createIndex({ createdAt: -1 }),
+      db.collection("messages").createIndex({ status: 1 }),
+      db.collection("admin_activities").createIndex({ timestamp: -1 }),
+    ]);
+    indexesEnsured = true;
+  } catch {
+    indexesEnsured = true;
+  }
 }
 
 async function requireDb() {
@@ -33,6 +61,7 @@ async function requireDb() {
   if (!db) {
     throw new Error("Failed to connect to MongoDB.");
   }
+  await ensureDbIndexes(db);
   return db;
 }
 
@@ -47,26 +76,34 @@ export async function getAllBookings(): Promise<BookingRecord[]> {
     .find({})
     .sort({ createdAt: -1 })
     .toArray();
-    
-  return docs.map((doc) => ({
-    bookingId: doc.bookingId,
-    createdAt: doc.createdAt,
-    updatedAt: doc.updatedAt,
-    fullName: doc.fullName,
-    email: doc.email,
-    phone: doc.phone || "",
-    service: doc.service,
-    preferredDate: doc.preferredDate || "",
-    preferredTime: doc.preferredTime || "",
-    projectDetails: doc.projectDetails || "",
-    budget: doc.budget || "Unspecified",
-    location: doc.location || "Unspecified",
-    message: doc.message || "",
-    status: doc.status || "NEW",
-    clerkUserId: doc.clerkUserId || null,
-    notes: doc.notes || [],
-    isVip: doc.isVip || false,
-  }));
+
+  return docs.map((doc) => {
+    const rawStatus = (doc.status || "NEW").toUpperCase() as BookingStatus;
+    const status = VALID_BOOKING_STATUSES.includes(rawStatus) ? rawStatus : "NEW";
+    const created = doc.createdAt || new Date().toISOString();
+    const updated = doc.updatedAt || created;
+    const msg = (doc.message || doc.projectDetails || "").toString().trim();
+    const details = (doc.projectDetails || doc.message || "").toString().trim();
+
+    return {
+      bookingId: doc.bookingId || generateBookingId(),
+      createdAt: created,
+      updatedAt: updated,
+      fullName: (doc.fullName || "Valued Client").toString().trim(),
+      email: (doc.email || "").toString().toLowerCase().trim(),
+      phone: (doc.phone || "").toString().trim(),
+      service: (doc.service || "Haute Architectural Interior").toString().trim(),
+      preferredDate: (doc.preferredDate || "").toString().trim(),
+      projectDetails: details,
+      budget: (doc.budget || "Unspecified").toString().trim(),
+      location: (doc.location || "Unspecified").toString().trim(),
+      message: msg,
+      status,
+      clerkUserId: doc.clerkUserId || null,
+      notes: Array.isArray(doc.notes) ? doc.notes : [],
+      isVip: Boolean(doc.isVip),
+    };
+  });
 }
 
 export async function createBooking(
@@ -76,12 +113,58 @@ export async function createBooking(
 ): Promise<BookingRecord> {
   const db = await requireDb();
   const now = new Date().toISOString();
+  const normalizedEmail = (data.email || "").toString().toLowerCase().trim();
+  const normalizedName = (data.fullName || "").toString().trim();
+  const detailsText = (data.projectDetails || data.message || "").toString().trim();
+  const targetStatus = data.status && VALID_BOOKING_STATUSES.includes(data.status) ? data.status : "NEW";
+
+  // Duplicate submission protection (within 15 seconds)
+  const fifteenSecsAgo = new Date(Date.now() - 15000).toISOString();
+  const existingDuplicate = await db.collection("bookings").findOne({
+    email: normalizedEmail,
+    projectDetails: detailsText,
+    createdAt: { $gte: fifteenSecsAgo },
+  });
+
+  if (existingDuplicate) {
+    const doc = existingDuplicate;
+    return {
+      bookingId: doc.bookingId,
+      createdAt: doc.createdAt || now,
+      updatedAt: doc.updatedAt || doc.createdAt || now,
+      fullName: doc.fullName || normalizedName,
+      email: doc.email || normalizedEmail,
+      phone: doc.phone || "",
+      service: doc.service || data.service,
+      preferredDate: doc.preferredDate || "",
+      projectDetails: doc.projectDetails || detailsText,
+      budget: doc.budget || "Unspecified",
+      location: doc.location || "Unspecified",
+      message: doc.message || detailsText,
+      status: doc.status || targetStatus,
+      clerkUserId: doc.clerkUserId || null,
+      notes: Array.isArray(doc.notes) ? doc.notes : [],
+      isVip: Boolean(doc.isVip),
+    };
+  }
+
   const newBooking: BookingRecord = {
-    ...data,
     bookingId: generateBookingId(),
     createdAt: now,
     updatedAt: now,
-    status: data.status || "NEW",
+    fullName: normalizedName,
+    email: normalizedEmail,
+    phone: (data.phone || "").toString().trim(),
+    service: (data.service || "Haute Architectural Interior").toString().trim(),
+    preferredDate: (data.preferredDate || "").toString().trim(),
+    projectDetails: detailsText,
+    budget: (data.budget || "Unspecified").toString().trim(),
+    location: (data.location || "Unspecified").toString().trim(),
+    message: (data.message || detailsText).toString().trim(),
+    status: targetStatus,
+    clerkUserId: data.clerkUserId || null,
+    notes: Array.isArray(data.notes) ? data.notes : [],
+    isVip: Boolean(data.isVip),
   };
 
   await db.collection("bookings").insertOne(newBooking);
@@ -92,6 +175,10 @@ export async function updateBookingStatus(
   bookingId: string,
   newStatus: BookingStatus
 ): Promise<BookingRecord | null> {
+  if (!VALID_BOOKING_STATUSES.includes(newStatus)) {
+    throw new Error(`Invalid status "${newStatus}". Must be one of: ${VALID_BOOKING_STATUSES.join(", ")}`);
+  }
+
   const db = await requireDb();
   const now = new Date().toISOString();
 
@@ -101,7 +188,27 @@ export async function updateBookingStatus(
     { returnDocument: "after" }
   );
 
-  return res ? (res as unknown as BookingRecord) : null;
+  if (!res) return null;
+  const doc = res as unknown as BookingRecord;
+
+  return {
+    bookingId: doc.bookingId,
+    createdAt: doc.createdAt || now,
+    updatedAt: now,
+    fullName: (doc.fullName || "").toString().trim(),
+    email: (doc.email || "").toString().toLowerCase().trim(),
+    phone: (doc.phone || "").toString().trim(),
+    service: (doc.service || "").toString().trim(),
+    preferredDate: (doc.preferredDate || "").toString().trim(),
+    projectDetails: (doc.projectDetails || doc.message || "").toString().trim(),
+    budget: (doc.budget || "Unspecified").toString().trim(),
+    location: (doc.location || "Unspecified").toString().trim(),
+    message: (doc.message || doc.projectDetails || "").toString().trim(),
+    status: doc.status || newStatus,
+    clerkUserId: doc.clerkUserId || null,
+    notes: Array.isArray(doc.notes) ? doc.notes : [],
+    isVip: Boolean(doc.isVip),
+  };
 }
 
 export async function deleteBooking(bookingId: string): Promise<boolean> {

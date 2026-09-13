@@ -5,16 +5,28 @@ import { constructMetadata } from "@/lib/seo";
 import { TIMELINE } from "@/lib/data";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import {
+  SlideFromLeft,
+  SlideFromRight,
+  FadeUpBottom,
+  StaggerContainer,
+  StaggerItem,
+  ParallaxImage,
   TextSlideFromTop,
-  Element3DReveal,
 } from "@/components/animations/MotionDirectional";
 import { Compass, Hammer, Layers, Sparkles, VolumeX } from "lucide-react";
 
 export const metadata: Metadata = constructMetadata({
-  title: "About Paima | Manifesto, Leadership & Architectural Heritage",
+  title: "About Paima | Luxury Interior Design Studio & Architectural Heritage",
   description:
-    "Paima champions subtractive luxury, rare artisanal materials, and architectural silence across Milan, Paris, Monaco, and New York.",
+    "Discover Paima's philosophy of subtractive luxury, rare artisanal materials, and architectural silence across Kolkata, India, Paris, New York, and Monaco.",
   path: "/about",
+  keywords: [
+    "About Paima Interior Design",
+    "Luxury Interior Designer Kolkata",
+    "Subtractive Interior Architecture",
+    "Luxury Residential Interior Design India",
+    "Artisanal Stonemasonry & Joinery",
+  ],
 });
 
 export default function AboutPage() {
@@ -22,7 +34,7 @@ export default function AboutPage() {
     <article className="pt-36 pb-24 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto text-black bg-[#E1D4C2]">
       {/* MANIFESTO HEADER - APP-STYLE GROUPED CARD */}
       <section aria-label="Manifesto Header" className="mb-20 lg:mb-28">
-        <TextSlideFromTop>
+        <SlideFromLeft>
           <div className="bg-[#BEB5A9]/50 border border-[#A78D78]/60 p-8 sm:p-12 lg:p-14 rounded-3xl shadow-xl space-y-8 backdrop-blur-sm">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
@@ -51,7 +63,7 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-        </TextSlideFromTop>
+        </SlideFromLeft>
       </section>
 
       {/* =========================================================================
@@ -67,7 +79,7 @@ export default function AboutPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-12">
           {/* 1. STUDIO PHILOSOPHY (HERO WIDE CARD - SPAN 7) */}
-          <Element3DReveal delay={0.1} className="md:col-span-7">
+          <SlideFromLeft delay={0.1} className="md:col-span-7">
             <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full">
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#E1D4C2]">
                 <Image
@@ -97,10 +109,10 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </Element3DReveal>
+          </SlideFromLeft>
 
           {/* 2. DESIGN APPROACH (MEDIUM CARD - SPAN 5) */}
-          <Element3DReveal delay={0.2} className="md:col-span-5">
+          <SlideFromRight delay={0.2} className="md:col-span-5">
             <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full">
               <div className="relative aspect-square w-full overflow-hidden bg-[#E1D4C2]">
                 <Image
@@ -130,10 +142,10 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </Element3DReveal>
+          </SlideFromRight>
 
           {/* 3. CRAFTSMANSHIP (CARD - SPAN 4) */}
-          <Element3DReveal delay={0.15} className="md:col-span-4">
+          <FadeUpBottom delay={0.1} className="md:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -153,10 +165,10 @@ export default function AboutPage() {
                 Hand-cut Roman Travertine &bull; Fluted Oak
               </div>
             </div>
-          </Element3DReveal>
+          </FadeUpBottom>
 
           {/* 4. MATERIAL INTELLIGENCE (CARD - SPAN 4) */}
-          <Element3DReveal delay={0.25} className="md:col-span-4">
+          <FadeUpBottom delay={0.2} className="md:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -176,10 +188,10 @@ export default function AboutPage() {
                 Unpolished Brass &bull; Belgian Linen
               </div>
             </div>
-          </Element3DReveal>
+          </FadeUpBottom>
 
           {/* 5. SPATIAL EXPERIENCE (CARD - SPAN 4) */}
-          <Element3DReveal delay={0.35} className="md:col-span-4">
+          <FadeUpBottom delay={0.3} className="md:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -199,10 +211,10 @@ export default function AboutPage() {
                 Concealed Acoustic Backing &bull; Low Reverberation
               </div>
             </div>
-          </Element3DReveal>
+          </FadeUpBottom>
 
           {/* 6. ATTENTION TO DETAIL (HERO BOTTOM CARD - SPAN 12) */}
-          <Element3DReveal delay={0.3} className="md:col-span-12">
+          <FadeUpBottom delay={0.25} className="md:col-span-12">
             <div className="group relative bg-[#BEB5A9] border border-[#A78D78] p-8 sm:p-12 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-7 space-y-4">
                 <span className="px-3.5 py-1.5 bg-[#E1D4C2] text-black text-[9px] font-sans uppercase tracking-[0.25em] font-extrabold border border-black rounded-sm shadow-sm inline-block">
@@ -237,7 +249,7 @@ export default function AboutPage() {
                 />
               </div>
             </div>
-          </Element3DReveal>
+          </FadeUpBottom>
         </div>
       </section>
 
@@ -256,8 +268,9 @@ export default function AboutPage() {
           <div className="space-y-12 sm:space-y-16">
             {TIMELINE.map((item, idx) => {
               const isEven = idx % 2 === 0;
+              const RevealComponent = isEven ? SlideFromRight : SlideFromLeft;
               return (
-                <Element3DReveal key={item.year} delay={0.15 * idx}>
+                <RevealComponent key={item.year} delay={0.1 * idx}>
                   <div
                     className={`relative flex flex-col md:flex-row items-start ${
                       isEven ? "md:flex-row-reverse" : ""
@@ -284,7 +297,7 @@ export default function AboutPage() {
                       <span className="w-2 h-2 rounded-full bg-black" />
                     </div>
                   </div>
-                </Element3DReveal>
+                </RevealComponent>
               );
             })}
           </div>

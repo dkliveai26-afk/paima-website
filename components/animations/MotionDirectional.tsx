@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
 // High-End Fluid Spring Physics
 export const springTransition = {
@@ -26,7 +26,7 @@ interface DirectionalProps {
 }
 
 /**
- * REQUIREMENT #4: TEXT ANIMATION (Text smoothly reveals into view on scroll)
+ * TEXT ANIMATION: Reveals from top (+y to 0)
  */
 export function TextSlideFromTop({
   children,
@@ -44,7 +44,7 @@ export function TextSlideFromTop({
     <motion.div
       initial={{ opacity: 0, y: -30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: viewportOnce, margin: "-50px" }}
+      viewport={{ once: viewportOnce, margin: "-40px" }}
       transition={{ ...springTransition, delay }}
       className={className}
     >
@@ -53,15 +53,12 @@ export function TextSlideFromTop({
   );
 }
 
-/**
- * Legacy DropFromTop alias maintaining TextSlideFromTop physics
- */
 export function DropFromTop(props: DirectionalProps) {
   return <TextSlideFromTop {...props} />;
 }
 
 /**
- * REQUIREMENT #5 & #3: 3D-STYLE ELEMENT & CARD SCROLL REVEAL (Cards & components drop smoothly from above)
+ * 3D-STYLE ELEMENT & CARD SCROLL REVEAL
  */
 export function Element3DReveal({
   children,
@@ -87,7 +84,7 @@ export function Element3DReveal({
         y: 0,
         scale: 1,
       }}
-      viewport={{ once: viewportOnce, margin: "-50px" }}
+      viewport={{ once: viewportOnce, margin: "-40px" }}
       transition={{ ...springTransition, delay }}
       className={className}
     >
@@ -96,21 +93,18 @@ export function Element3DReveal({
   );
 }
 
-/**
- * REQUIREMENT #5: CARD DROP FROM TOP
- */
 export function CardDropFromTop(props: DirectionalProps) {
   return <Element3DReveal {...props} />;
 }
 
 /**
- * Slides in seamlessly from the Left
+ * Slides in seamlessly from Left (-x to 0)
  */
 export function SlideFromLeft({
   children,
   delay = 0,
   className = "",
-  distance = 50,
+  distance = 45,
   viewportOnce = true,
 }: DirectionalProps & { distance?: number | string }) {
   const shouldReduceMotion = useReducedMotion();
@@ -126,7 +120,7 @@ export function SlideFromLeft({
         x: typeof distance === "number" ? -distance : `-${distance}`,
       }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: viewportOnce, margin: "-50px" }}
+      viewport={{ once: viewportOnce, margin: "-40px" }}
       transition={{ ...springTransition, delay }}
       className={className}
     >
@@ -136,13 +130,13 @@ export function SlideFromLeft({
 }
 
 /**
- * Slides in seamlessly from the Right
+ * Slides in seamlessly from Right (+x to 0)
  */
 export function SlideFromRight({
   children,
   delay = 0,
   className = "",
-  distance = 50,
+  distance = 45,
   viewportOnce = true,
 }: DirectionalProps & { distance?: number | string }) {
   const shouldReduceMotion = useReducedMotion();
@@ -158,7 +152,7 @@ export function SlideFromRight({
         x: typeof distance === "number" ? distance : distance,
       }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: viewportOnce, margin: "-50px" }}
+      viewport={{ once: viewportOnce, margin: "-40px" }}
       transition={{ ...springTransition, delay }}
       className={className}
     >
@@ -186,7 +180,7 @@ export function FadeUpBottom({
     <motion.div
       initial={{ opacity: 0, y: 35 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: viewportOnce, margin: "-50px" }}
+      viewport={{ once: viewportOnce, margin: "-40px" }}
       transition={{ ...springTransition, delay }}
       className={className}
     >
@@ -212,9 +206,9 @@ export function ScaleInImage({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 30 }}
+      initial={{ opacity: 0, scale: 0.95, y: 25 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
-      viewport={{ once: viewportOnce, margin: "-50px" }}
+      viewport={{ once: viewportOnce, margin: "-40px" }}
       transition={{ ...springTransition, delay }}
       className={className}
     >
@@ -229,8 +223,8 @@ export function ScaleInImage({
 export function StaggerContainer({
   children,
   className = "",
-  staggerDelay = 0.1,
-  delayChildren = 0.05,
+  staggerDelay = 0.08,
+  delayChildren = 0.03,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -247,7 +241,7 @@ export function StaggerContainer({
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
+      viewport={{ once: true, margin: "-40px" }}
       variants={{
         hidden: { opacity: 0 },
         visible: {
@@ -284,7 +278,7 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 30, scale: 0.97 },
+        hidden: { opacity: 0, y: 25, scale: 0.98 },
         visible: {
           opacity: 1,
           y: 0,
@@ -300,7 +294,7 @@ export function StaggerItem({
 }
 
 /**
- * Image Clip Reveal (Vertical mask reveal effect on scroll)
+ * Image Clip Reveal (Vertical inset mask reveal on scroll)
  */
 export function ImageClipReveal({
   children,
@@ -316,13 +310,47 @@ export function ImageClipReveal({
 
   return (
     <motion.div
-      initial={{ opacity: 0, clipPath: "inset(8% 0% 8% 0% round 1rem)" }}
+      initial={{ opacity: 0, clipPath: "inset(6% 0% 6% 0% round 1rem)" }}
       whileInView={{ opacity: 1, clipPath: "inset(0% 0% 0% 0% round 1rem)" }}
-      viewport={{ once: viewportOnce, margin: "-50px" }}
-      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay }}
+      viewport={{ once: viewportOnce, margin: "-40px" }}
+      transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay }}
       className={className}
     >
       {children}
     </motion.div>
+  );
+}
+
+/**
+ * Scroll-Linked Parallax Wrapper for Editorial Imagery
+ */
+export function ParallaxImage({
+  children,
+  className = "",
+  offset = 20,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  offset?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    shouldReduceMotion ? [0, 0] : [-offset, offset]
+  );
+
+  return (
+    <div ref={ref} className={`overflow-hidden ${className}`}>
+      <motion.div style={{ y }}>
+        {children}
+      </motion.div>
+    </div>
   );
 }

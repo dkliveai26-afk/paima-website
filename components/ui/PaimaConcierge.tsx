@@ -165,7 +165,7 @@ export default function PaimaAgent() {
       {/* Floating Toggle Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#1A1A1A] text-[#F5F2EB] shadow-2xl hover:bg-black transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8B89E] focus:ring-offset-2"
+        className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#1A1A1A] text-[#F5F2EB] shadow-2xl hover:bg-black transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8B89E] focus:ring-offset-2"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         initial={{ opacity: 0, y: 20 }}
@@ -173,7 +173,7 @@ export default function PaimaAgent() {
         transition={{ delay: 0.5 }}
         aria-label="Toggle PAIMA Agent"
       >
-        {isOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
+        {isOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6" />}
       </motion.button>
 
       {/* Chat Window */}
@@ -184,7 +184,7 @@ export default function PaimaAgent() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 flex h-[500px] max-h-[calc(100vh-120px)] w-[350px] flex-col overflow-hidden rounded-2xl bg-[#FDFBF7] shadow-2xl border border-[#E8E3D5] font-sans"
+            className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 left-4 sm:left-auto w-auto sm:w-[360px] max-w-[calc(100vw-32px)] z-50 flex h-[460px] sm:h-[500px] max-h-[calc(100vh-100px)] flex-col overflow-hidden rounded-2xl bg-[#FDFBF7] shadow-2xl border border-[#E8E3D5] font-sans"
           >
             {/* Header */}
             <div className="flex items-center justify-between bg-[#1A1A1A] px-5 py-4 text-[#F5F2EB] shrink-0">

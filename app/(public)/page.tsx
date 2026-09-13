@@ -3,10 +3,17 @@ import { constructMetadata } from "@/lib/seo";
 import { PaimaHomeClientWrapper } from "@/components/home/PaimaHomeClientWrapper";
 
 export const metadata: Metadata = constructMetadata({
-  title: "Paima | Luxury Interior Design & Prime Real Estate",
+  title: "Paima | Luxury Interior Design, Architecture & Prime Real Estate",
   description:
-    "Paima is an elite interior architecture and prime real estate agency curating monumental residences, modern villas with pools, and private sky penthouses across Los Angeles, New York, Monaco, and Paris.",
+    "Paima is a haute interior architecture and luxury interior design studio orchestrating bespoke residential interiors, private estates, and luxury penthouses in Kolkata, India, and premier global locations.",
   path: "/",
+  keywords: [
+    "Luxury Interior Design",
+    "Interior Designer Kolkata",
+    "Luxury Interior Design Kolkata",
+    "Interior Design Services India",
+    "Residential Interior Architecture",
+  ],
 });
 
 export default function HomePage() {

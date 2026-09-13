@@ -3,13 +3,25 @@ import Link from "next/link";
 import { constructMetadata } from "@/lib/seo";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { BentoGridServices } from "@/components/ui/BentoGridServices";
-import { TextSlideFromTop, Element3DReveal } from "@/components/animations/MotionDirectional";
+import {
+  SlideFromLeft,
+  SlideFromRight,
+  FadeUpBottom,
+} from "@/components/animations/MotionDirectional";
 
 export const metadata: Metadata = constructMetadata({
-  title: "Haute Interior Architecture & Real Estate Advisory | Paima",
+  title: "Interior Design Services & Haute Architecture | Paima Studio",
   description:
-    "Explore our multidisciplinary offerings: Haute Residential Architecture, Prime Real Estate Acquisitions, 3D Spatial CGI Digital Twins, and Art Curation.",
+    "Explore Paima's bespoke interior design services: haute residential architecture, prime real estate advisory, 3D spatial CGI digital twins, and fine art curation in Kolkata, India, and globally.",
   path: "/services",
+  keywords: [
+    "Interior Design Services",
+    "Luxury Interior Architecture",
+    "Residential Interior Design Kolkata",
+    "Interior Design Services India",
+    "3D Spatial CGI Visualization",
+    "Bespoke Furnishing Advisory",
+  ],
 });
 
 const PROCESS_STEPS = [
@@ -45,7 +57,7 @@ export default function ServicesPage() {
     <div className="pt-36 pb-24 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto text-black bg-[#E1D4C2]">
       {/* HEADER */}
       <section aria-label="Services Introduction" className="mb-20">
-        <TextSlideFromTop>
+        <SlideFromLeft>
           <div className="flex items-center gap-3 mb-4">
             <span className="w-8 h-[2px] bg-black" />
             <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold">
@@ -61,7 +73,7 @@ export default function ServicesPage() {
           <p className="mt-6 font-sans text-sm sm:text-base text-black max-w-2xl font-semibold leading-relaxed">
             From monumental private penthouses to intimate villa sanctuaries, we orchestrate every stage of the spatial journey with artistic integrity and technical precision.
           </p>
-        </TextSlideFromTop>
+        </SlideFromLeft>
       </section>
 
       {/* BENTO GRID */}
@@ -79,7 +91,7 @@ export default function ServicesPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mt-12">
           {PROCESS_STEPS.map((item, idx) => (
-            <Element3DReveal key={item.step} delay={0.1 * idx}>
+            <FadeUpBottom key={item.step} delay={0.08 * idx}>
               <div className="p-6 bg-[#BEB5A9]/60 border border-[#A78D78]/50 rounded-2xl h-full flex flex-col justify-between hover:border-black transition-colors duration-400 shadow-xl">
                 <div>
                   <span className="font-serif text-3xl text-black font-black block mb-4">
@@ -99,14 +111,14 @@ export default function ServicesPage() {
                   </span>
                 </div>
               </div>
-            </Element3DReveal>
+            </FadeUpBottom>
           ))}
         </div>
       </section>
 
       {/* CTA */}
       <section className="text-center pt-8">
-        <TextSlideFromTop>
+        <FadeUpBottom delay={0.15}>
           <div className="bg-[#BEB5A9] text-black p-12 sm:p-20 border border-[#A78D78] max-w-4xl mx-auto space-y-6 rounded-2xl shadow-2xl">
             <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold">
               DIRECT ENGAGEMENT
@@ -126,7 +138,7 @@ export default function ServicesPage() {
               </Link>
             </div>
           </div>
-        </TextSlideFromTop>
+        </FadeUpBottom>
       </section>
     </div>
   );

@@ -285,10 +285,6 @@ export function CalendarScheduler() {
 
                   <div className="space-y-1 text-[11px] text-[#7D6B64] pt-1 border-t border-[#E5D5C5]">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-3.5 h-3.5 text-[#B3877F]" />
-                      <span className="font-mono text-[#4A3B36]">{b.preferredTime || "10:00 AM"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
                       <MapPin className="w-3.5 h-3.5 text-[#B3877F]" />
                       <span>{b.location}</span>
                     </div>

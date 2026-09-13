@@ -18,7 +18,6 @@ export interface BookingRecord {
   phone: string;
   service: string;
   preferredDate: string;
-  preferredTime: string;
   projectDetails: string;
   budget: string;
   location: string;

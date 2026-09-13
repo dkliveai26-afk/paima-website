@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createBooking, createMessage, recordActivity } from "@/lib/db-server";
+import { sendNewBookingNotificationEmail } from "@/lib/email-welcome";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +12,6 @@ export async function POST(req: NextRequest) {
       phone,
       service,
       preferredDate,
-      preferredTime,
       projectDetails,
       budget,
       location,
@@ -55,20 +55,26 @@ export async function POST(req: NextRequest) {
     const normalizedName = fullName.trim();
     const normalizedService = (service || "Haute Residential Architecture").toString().trim();
 
-    // 1. Create the booking record
+    // 1. Create the booking record in MongoDB
     const createdRecord = await createBooking({
       fullName: normalizedName,
       email: normalizedEmail,
       phone: (phone || "").toString().trim(),
       service: normalizedService,
       preferredDate: (preferredDate || "").toString().trim(),
-      preferredTime: (preferredTime || "").toString().trim(),
       projectDetails: detailsText,
       budget: (budget || "Unspecified").toString().trim(),
       location: (location || "Unspecified").toString().trim(),
       message: detailsText,
       clerkUserId,
     });
+
+    // 2. Dispatch real PAIMA admin email notification (ONLY AFTER successful DB write)
+    try {
+      await sendNewBookingNotificationEmail(createdRecord);
+    } catch (emailErr) {
+      console.warn("Non-fatal: Admin email notification dispatch failed:", emailErr);
+    }
 
     // 2. Mirror booking as an inquiry message so the admin Messages inbox shows it
     try {
