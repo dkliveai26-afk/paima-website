@@ -2,8 +2,8 @@ import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_paima_atelier_fallback_key_32";
-const secretKey = process.env.CLERK_SECRET_KEY || "sk_test_paima_atelier_fallback_key_32";
+const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_Y2xlcmsucGFpbWFkZXNpZ24uY29tJA==";
+const secretKey = process.env.CLERK_SECRET_KEY || "sk_test_paima_atelier_fallback_secret_key_64_chars_long";
 
 export default clerkMiddleware(
   async (auth, req) => {
