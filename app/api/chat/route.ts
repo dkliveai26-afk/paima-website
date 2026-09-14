@@ -3,21 +3,22 @@ import { streamText, convertToModelMessages } from "ai";
 import { NextResponse } from "next/server";
 import { getKnowledgeBaseContext } from "@/lib/db-knowledge";
 
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY || "",
-});
-
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    if (!process.env.GEMINI_API_KEY) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
       console.error("Missing GEMINI_API_KEY environment variable.");
       return NextResponse.json(
         { error: "Configuration error. AI services are currently unavailable." },
         { status: 500 }
       );
     }
+
+    const google = createGoogleGenerativeAI({
+      apiKey: apiKey,
+    });
 
     const systemContext = await getKnowledgeBaseContext();
 
@@ -37,9 +38,12 @@ export async function POST(req: Request) {
     // Active supported Google Gemini models
     const candidateModels = [
       "gemini-3.6-flash",
+      "gemini-1.5-flash",
+      "gemini-2.0-flash",
       "gemini-3.5-flash-lite",
       "gemini-flash-latest",
     ];
+
     let result: any = null;
     let lastError: any = null;
 
@@ -63,13 +67,7 @@ export async function POST(req: Request) {
       throw lastError || new Error("All AI models unavailable");
     }
 
-    if (typeof (result as any).toUIMessageStreamResponse === "function") {
-      return (result as any).toUIMessageStreamResponse();
-    } else if (typeof (result as any).toDataStreamResponse === "function") {
-      return (result as any).toDataStreamResponse();
-    } else {
-      return result.toTextStreamResponse();
-    }
+    return result.toDataStreamResponse();
   } catch (error: any) {
     console.error("Error in AI chat route handler:", error);
     return NextResponse.json(
