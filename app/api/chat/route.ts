@@ -1,6 +1,4 @@
-import { createOpenAI } from "@ai-sdk/openai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { streamText, convertToModelMessages } from "ai";
+import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import { getKnowledgeBaseContext } from "@/lib/db-knowledge";
 
@@ -10,8 +8,8 @@ function cleanApiKey(raw: string | undefined): string {
   if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
     key = key.slice(1, -1).trim();
   }
-  if (/^(OPENAI_API_KEY|GEMINI_API_KEY)\s*[:=]\s*/i.test(key)) {
-    key = key.replace(/^(OPENAI_API_KEY|GEMINI_API_KEY)\s*[:=]\s*/i, "").trim();
+  if (/^OPENAI_API_KEY\s*[:=]\s*/i.test(key)) {
+    key = key.replace(/^OPENAI_API_KEY\s*[:=]\s*/i, "").trim();
     if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
       key = key.slice(1, -1).trim();
     }
@@ -24,74 +22,78 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
 
     const openaiKey = cleanApiKey(process.env.OPENAI_API_KEY);
-    const geminiKey = cleanApiKey(process.env.GEMINI_API_KEY);
 
-    if (!openaiKey && !geminiKey) {
-      console.error("Missing AI API key environment variable (OPENAI_API_KEY or GEMINI_API_KEY).");
+    if (!openaiKey) {
+      console.error("Missing OPENAI_API_KEY environment variable.");
       return NextResponse.json(
         { error: "Configuration error. AI services are currently unavailable." },
         { status: 500 }
       );
     }
 
+    const openai = new OpenAI({ apiKey: openaiKey });
     const systemContext = await getKnowledgeBaseContext();
 
-    const safeMessages = Array.isArray(messages)
+    const formattedMessages = Array.isArray(messages)
       ? messages.map((m: any) => {
-          if (Array.isArray(m.parts)) return m;
-          const textContent = typeof m.content === "string" ? m.content : "";
+          let text = "";
+          if (typeof m.content === "string") {
+            text = m.content;
+          } else if (Array.isArray(m.parts)) {
+            text = m.parts
+              .filter((p: any) => p.type === "text")
+              .map((p: any) => p.text)
+              .join("\n");
+          }
           return {
-            role: m.role || "user",
-            parts: [{ type: "text", text: textContent }],
+            role: m.role === "assistant" ? "assistant" : "user",
+            content: text,
           };
         })
       : [];
 
-    const modelMessages = await convertToModelMessages(safeMessages);
+    const responseStream = await openai.responses.create({
+      model: "gpt-5.6-luna",
+      instructions: systemContext,
+      input: formattedMessages as any,
+      stream: true,
+    });
 
-    let result: any = null;
+    const encoder = new TextEncoder();
 
-    // 1. Try OpenAI if configured
-    if (openaiKey) {
-      try {
-        const openai = createOpenAI({ apiKey: openaiKey });
-        const stream = streamText({
-          model: openai("gpt-4o-mini"),
-          system: systemContext,
-          messages: modelMessages,
-          maxOutputTokens: 800,
-          temperature: 0.7,
-        });
-        result = stream;
-      } catch (openAiErr) {
-        console.warn("OpenAI stream initialization failed, falling back to Gemini:", openAiErr);
-        result = null;
-      }
-    }
+    const customStream = new ReadableStream({
+      async start(controller) {
+        controller.enqueue(encoder.encode(`data: {"type":"start"}\n\n`));
+        controller.enqueue(encoder.encode(`data: {"type":"start-step"}\n\n`));
+        controller.enqueue(encoder.encode(`data: {"type":"text-start","id":"0"}\n\n`));
 
-    // 2. Fall back to Gemini if OpenAI is unavailable
-    if (!result && geminiKey) {
-      const google = createGoogleGenerativeAI({ apiKey: geminiKey });
-      result = streamText({
-        model: google("gemini-3.6-flash"),
-        system: systemContext,
-        messages: modelMessages,
-        maxOutputTokens: 800,
-        temperature: 0.7,
-      });
-    }
+        try {
+          for await (const chunk of responseStream) {
+            if (chunk.type === "response.output_text.delta" && chunk.delta) {
+              controller.enqueue(
+                encoder.encode(`data: {"type":"text-delta","id":"0","delta":${JSON.stringify(chunk.delta)}}\n\n`)
+              );
+            }
+          }
 
-    if (!result) {
-      throw new Error("All configured AI providers are currently unavailable.");
-    }
+          controller.enqueue(encoder.encode(`data: {"type":"text-end","id":"0"}\n\n`));
+          controller.enqueue(encoder.encode(`data: {"type":"finish-step"}\n\n`));
+          controller.enqueue(encoder.encode(`data: {"type":"finish"}\n\n`));
+          controller.close();
+        } catch (streamErr) {
+          console.error("Stream reading error:", streamErr);
+          controller.error(streamErr);
+        }
+      },
+    });
 
-    if (typeof (result as any).toUIMessageStreamResponse === "function") {
-      return (result as any).toUIMessageStreamResponse();
-    } else if (typeof (result as any).toDataStreamResponse === "function") {
-      return (result as any).toDataStreamResponse();
-    } else {
-      return result.toTextStreamResponse();
-    }
+    return new Response(customStream, {
+      headers: {
+        "Content-Type": "text/event-stream; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+      },
+    });
   } catch (error: any) {
     console.error("Error in AI chat route handler:", error);
     return NextResponse.json(
@@ -100,4 +102,6 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
 
