@@ -64,6 +64,7 @@ export function Navbar() {
             initial={{ opacity: 0, y: -35 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...springTransition, delay: 0 }}
+            className="shrink-0"
           >
             <Link
               href="/"
@@ -82,7 +83,8 @@ export function Navbar() {
           </motion.div>
 
           {/* ================= CENTER NODE: CORE NAVIGATIONAL LINKS (DROP FROM TOP WITH STAGGER) ================= */}
-          <div className="hidden md:flex items-center gap-8 lg:gap-10">
+          {/* gap-5 at md, gap-7 at lg, gap-9 at xl — gives nav room to breathe without overflow */}
+          <div className="hidden md:flex items-center gap-5 lg:gap-7 xl:gap-9">
             {NAV_LINKS.map((link, idx) => {
               const isActive = pathname === link.href;
               return (
@@ -98,7 +100,8 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     className={cn(
-                      "relative py-1 font-sans text-xs uppercase tracking-[0.2em] transition-colors duration-300 group",
+                      // whitespace-nowrap prevents "DESIGN\nSTUDIO" wrapping
+                      "relative py-1 font-sans text-xs uppercase tracking-[0.2em] transition-colors duration-300 group whitespace-nowrap",
                       isActive
                         ? "text-black font-extrabold"
                         : "text-black/90 font-bold hover:text-black"
@@ -123,27 +126,30 @@ export function Navbar() {
           </div>
 
           {/* ================= RIGHT NODE: AUTH CONTROLS + PRIVATE INQUIRIES (DROP FROM TOP) ================= */}
+          {/* shrink-0 prevents this section from being compressed by the center nav */}
           <motion.div
             initial={{ opacity: 0, y: -35 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...springTransition, delay: 0.28 }}
-            className="flex items-center gap-3 sm:gap-4"
+            className="flex items-center gap-2 lg:gap-3 shrink-0"
           >
             {/* WHEN SIGNED OUT */}
             <Show when="signed-out">
+              {/* SIGN IN: xl+ only — avoids crowding at 1024-1279px */}
               <SignInButton mode="modal">
                 <button
                   type="button"
-                  className="hidden lg:inline-flex items-center text-xs font-sans uppercase tracking-[0.18em] font-extrabold text-black hover:text-[#A78D78] transition-colors py-2 px-3 focus:outline-none"
+                  className="hidden xl:inline-flex items-center text-xs font-sans uppercase tracking-[0.18em] font-extrabold text-black hover:text-[#A78D78] transition-colors py-2 px-3 focus:outline-none whitespace-nowrap"
                 >
                   SIGN IN
                 </button>
               </SignInButton>
 
+              {/* CREATE ACCOUNT: lg+ — visible from 1024px, nowrap prevents vertical break */}
               <SignUpButton mode="modal">
                 <button
                   type="button"
-                  className="hidden sm:inline-flex items-center px-4 py-2 rounded-full border border-black bg-[#BEB5A9] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.18em] font-extrabold transition-all shadow-sm focus:outline-none"
+                  className="hidden lg:inline-flex items-center px-4 py-2 rounded-full border border-black bg-[#BEB5A9] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.18em] font-extrabold transition-all shadow-sm focus:outline-none whitespace-nowrap"
                 >
                   CREATE ACCOUNT
                 </button>
@@ -164,10 +170,10 @@ export function Navbar() {
               </div>
             </Show>
 
-            {/* PRESERVED CTA: PRIVATE INQUIRIES */}
+            {/* PRESERVED CTA: PRIVATE INQUIRIES — shrink-0 + whitespace-nowrap keeps it on one line */}
             <Link
               href="/contact"
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black text-xs font-sans uppercase tracking-[0.18em] font-extrabold transition-all duration-300 group shadow-md border border-black shrink-0"
+              className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-5 py-2.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black text-xs font-sans uppercase tracking-[0.18em] font-extrabold transition-all duration-300 group shadow-md border border-black shrink-0 whitespace-nowrap"
             >
               <span>PRIVATE INQUIRIES</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-black transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
