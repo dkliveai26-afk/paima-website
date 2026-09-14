@@ -3,11 +3,26 @@ import { streamText, convertToModelMessages } from "ai";
 import { NextResponse } from "next/server";
 import { getKnowledgeBaseContext } from "@/lib/db-knowledge";
 
+function cleanApiKey(raw: string | undefined): string {
+  if (!raw) return "";
+  let key = raw.trim();
+  if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
+    key = key.slice(1, -1).trim();
+  }
+  if (/^GEMINI_API_KEY\s*[:=]\s*/i.test(key)) {
+    key = key.replace(/^GEMINI_API_KEY\s*[:=]\s*/i, "").trim();
+    if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
+      key = key.slice(1, -1).trim();
+    }
+  }
+  return key;
+}
+
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = cleanApiKey(process.env.GEMINI_API_KEY);
     if (!apiKey) {
       console.error("Missing GEMINI_API_KEY environment variable.");
       return NextResponse.json(
