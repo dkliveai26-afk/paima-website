@@ -35,43 +35,20 @@ export async function POST(req: Request) {
 
     const modelMessages = await convertToModelMessages(safeMessages);
 
-    // Active supported Google Gemini models
-    const candidateModels = [
-      "gemini-3.6-flash",
-      "gemini-1.5-flash",
-      "gemini-2.0-flash",
-      "gemini-3.5-flash-lite",
-      "gemini-flash-latest",
-    ];
+    // Active supported Google Gemini model (gemini-3.6-flash)
+    const result = streamText({
+      model: google("gemini-3.6-flash"),
+      system: systemContext,
+      messages: modelMessages,
+      maxOutputTokens: 800,
+      temperature: 0.7,
+    });
 
-    let result: any = null;
-    let lastError: any = null;
-
-    for (const modelName of candidateModels) {
-      try {
-        result = streamText({
-          model: google(modelName),
-          system: systemContext,
-          messages: modelMessages,
-          maxOutputTokens: 800,
-          temperature: 0.7,
-        });
-        if (result) break;
-      } catch (err) {
-        lastError = err;
-        console.warn(`Model ${modelName} encountered error, trying next...`);
-      }
-    }
-
-    if (!result) {
-      throw lastError || new Error("All AI models unavailable");
-    }
-
-    return result.toDataStreamResponse();
+    return result.toUIMessageStreamResponse();
   } catch (error: any) {
     console.error("Error in AI chat route handler:", error);
     return NextResponse.json(
-      { error: "PAIMA Concierge is currently unavailable. Please try again later." },
+      { error: error?.message || String(error) || "PAIMA Concierge is currently unavailable." },
       { status: 500 }
     );
   }
