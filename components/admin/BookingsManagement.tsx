@@ -76,7 +76,7 @@ export function BookingsManagement() {
     email: "",
     phone: "",
     service: "Haute Architectural Interior",
-    budget: "$250,000 – $500,000",
+    budget: "₹2,50,000 – ₹5,00,000",
     location: "",
     preferredDate: "",
     projectDetails: "",
@@ -227,7 +227,7 @@ export function BookingsManagement() {
         email: "",
         phone: "",
         service: "Haute Architectural Interior",
-        budget: "$250,000 – $500,000",
+        budget: "₹2,50,000 – ₹5,00,000",
         location: "",
         preferredDate: "",
         projectDetails: "",
@@ -707,7 +707,7 @@ export function BookingsManagement() {
                     value={newForm.budget}
                     onChange={(e) => setNewForm({ ...newForm, budget: e.target.value })}
                     className="w-full bg-[#FDFBF7] border border-[#E5D5C5] rounded-xl px-3 py-2 text-[#1C1614] outline-none focus:border-[#B3877F]"
-                    placeholder="$500,000 – $1,000,000"
+                    placeholder="₹5,00,000 – ₹10,00,000"
                   />
                 </div>
 

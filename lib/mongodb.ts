@@ -55,9 +55,10 @@ export async function getMongoClient(): Promise<MongoClient | null> {
   }
 }
 
-export async function getMongoDb(dbName = "paima_atelier"): Promise<Db | null> {
+export async function getMongoDb(dbName?: string): Promise<Db | null> {
   const clientInstance = await getMongoClient();
   if (!clientInstance) return null;
-  return clientInstance.db(dbName);
+  const targetDb = dbName || process.env.MONGODB_DB;
+  return targetDb ? clientInstance.db(targetDb) : clientInstance.db();
 }
 

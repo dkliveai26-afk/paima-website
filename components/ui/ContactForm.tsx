@@ -51,7 +51,7 @@ export function ContactForm() {
     email: "",
     phone: "",
     projectType: "Haute Residential Architecture",
-    budget: "$250,000 – $500,000",
+    budget: "₹2,50,000 – ₹5,00,000",
     location: "",
     preferredDate: "",
     message: "",
@@ -109,10 +109,10 @@ export function ContactForm() {
   ];
 
   const budgetRanges = [
-    "$100,000 – $250,000",
-    "$250,000 – $500,000",
-    "$500,000 – $1,000,000",
-    "$1,000,000+",
+    "₹1,00,000 – ₹2,50,000",
+    "₹2,50,000 – ₹5,00,000",
+    "₹5,00,000 – ₹10,00,000",
+    "₹10,00,000+",
   ];
 
   if (submitted) {
@@ -154,7 +154,7 @@ export function ContactForm() {
               email: "",
               phone: "",
               projectType: "Haute Residential Architecture",
-              budget: "$250,000 – $500,000",
+              budget: "₹2,50,000 – ₹5,00,000",
               location: "",
               preferredDate: "",
               message: "",

@@ -129,7 +129,7 @@ export function generateLocalBusinessSchema() {
     url: BASE_URL,
     telephone: "+12128904100",
     email: "concierge@paimadesign.com",
-    priceRange: "$$$$$",
+    priceRange: "₹₹₹₹₹",
     areaServed: [
       {
         "@type": "City",

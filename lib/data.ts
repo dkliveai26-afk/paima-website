@@ -57,7 +57,7 @@ export const AGENCY_INFO = {
     { city: "Los Angeles", address: "9601 Wilshire Blvd, Beverly Hills", phone: "+1 (310) 550-2000" },
   ],
   stats: [
-    { label: "Prime Estates Managed", value: "$1.8B+" },
+    { label: "Prime Estates Managed", value: "₹1.8B+" },
     { label: "Turnkey Residences", value: "140+" },
     { label: "Global Design Laurels", value: "32" },
     { label: "Years of Distinction", value: "15" },
@@ -74,7 +74,7 @@ export const HERO_ESTATE = {
   title: "Villa Bel-Air Horizon",
   location: "Bel-Air, Los Angeles",
   specs: "14,500 sq.ft • 6 Beds • 8 Baths • Infinity Pool",
-  price: "$28,500,000",
+  price: "₹2,85,00,000",
   image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1920&q=80",
   interiorSpecs: [
     "Honed Roman Travertine Decking",
@@ -93,7 +93,7 @@ export const PROJECTS: Project[] = [
     location: "Bel-Air, Los Angeles",
     year: "2025",
     area: "14,500 sq.ft",
-    price: "$28,500,000",
+    price: "₹2,85,00,000",
     image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1920&q=80",
     featured: true,
     description:
@@ -109,7 +109,7 @@ export const PROJECTS: Project[] = [
     location: "French Riviera, France",
     year: "2024",
     area: "12,200 sq.ft",
-    price: "€34,000,000",
+    price: "₹3,40,00,000",
     image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80",
     featured: true,
     description:
@@ -125,7 +125,7 @@ export const PROJECTS: Project[] = [
     location: "Tribeca, New York",
     year: "2025",
     area: "8,400 sq.ft",
-    price: "$22,000,000",
+    price: "₹2,20,00,000",
     image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1920&q=80",
     featured: true,
     description:
@@ -141,7 +141,7 @@ export const PROJECTS: Project[] = [
     location: "6th Arr., Paris",
     year: "2024",
     area: "6,900 sq.ft",
-    price: "€18,500,000",
+    price: "₹1,85,00,000",
     image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80",
     featured: false,
     description:
@@ -157,7 +157,7 @@ export const PROJECTS: Project[] = [
     location: "Ginza, Tokyo",
     year: "2024",
     area: "5,300 sq.ft",
-    price: "$14,800,000",
+    price: "₹1,48,00,000",
     image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1920&q=80",
     featured: false,
     description:
@@ -173,7 +173,7 @@ export const PROJECTS: Project[] = [
     location: "Lake Como, Italy",
     year: "2024",
     area: "11,200 sq.ft",
-    price: "€26,000,000",
+    price: "₹2,60,00,000",
     image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=80",
     featured: false,
     description:
@@ -300,9 +300,9 @@ export const TIMELINE: TimelineItem[] = [
   },
   {
     year: "2026",
-    title: "The $1.8B Prime Portfolio Milestone",
+    title: "The ₹1.8B Prime Portfolio Milestone",
     description:
-      "Surpassed $1.8B in orchestrated ultra-prime transactions and architectural renovations across premier global capitals.",
+      "Surpassed ₹1.8B in orchestrated ultra-prime transactions and architectural renovations across premier global capitals.",
     milestone: "Global Leader",
   },
 ];

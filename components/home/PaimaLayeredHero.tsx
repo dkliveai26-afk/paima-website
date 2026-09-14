@@ -227,7 +227,7 @@ export function PaimaLayeredHero() {
       >
         <div>
           <span className="font-serif text-2xl sm:text-3xl font-extrabold text-black">
-            $1.8B+
+            ₹1.8B+
           </span>
           <p className="text-[10px] font-sans uppercase tracking-widest text-black font-bold mt-0.5">
             Prime Assets Curated
