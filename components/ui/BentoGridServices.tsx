@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronDown } from "lucide-react";
 import { SERVICES, type Service } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import { SlideFromLeft, SlideFromRight } from "@/components/animations/MotionDirectional";
+import { SlideFromLeft, SlideFromRight, luxuryEase } from "@/components/animations/MotionDirectional";
 
 export function BentoGridServices() {
   const [expandedId, setExpandedId] = useState<string | null>(SERVICES[0].id);
@@ -22,11 +22,11 @@ export function BentoGridServices() {
         const RevealComponent = idx % 2 === 0 ? SlideFromLeft : SlideFromRight;
 
         return (
-          <RevealComponent key={service.id} delay={0.1 * idx} className={cn("w-full", service.span)}>
+          <RevealComponent key={service.id} delay={0.08 * idx} className={cn("w-full", service.span)}>
             <motion.div
               layout
               className={cn(
-                "group relative bg-[#BEB5A9]/60 border border-[#A78D78]/50 rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between shadow-xl hover:shadow-2xl h-full",
+                "group relative bg-[#BEB5A9]/60 border border-[#A78D78]/50 rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between shadow-xl hover:shadow-2xl h-full will-change-transform",
                 isExpanded ? "ring-2 ring-black" : "hover:border-black"
               )}
             >
@@ -37,12 +37,12 @@ export function BentoGridServices() {
                   alt={`${service.title} - Paima Haute Services`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2] via-transparent to-transparent opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2] via-transparent to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-95" />
 
                 <div className="absolute top-4 left-4 z-10">
-                  <span className="px-3 py-1 bg-[#E1D4C2] text-[9px] font-sans uppercase tracking-[0.2em] text-black font-extrabold rounded-sm border border-black">
+                  <span className="px-3 py-1 bg-[#E1D4C2] text-[9px] font-sans uppercase tracking-[0.2em] text-black font-extrabold rounded-sm border border-black shadow-sm">
                     {service.tag}
                   </span>
                 </div>
@@ -67,7 +67,7 @@ export function BentoGridServices() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.4, ease: luxuryEase }}
                         className="overflow-hidden"
                       >
                         <div className="pt-4 border-t border-[#A78D78]/50 space-y-3 mb-6">
@@ -93,14 +93,14 @@ export function BentoGridServices() {
                   <button
                     type="button"
                     onClick={() => toggleExpand(service.id)}
-                    className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.18em] text-black hover:text-[#A78D78] font-extrabold transition-colors duration-300 focus:outline-none"
+                    className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.18em] text-black hover:text-[#A78D78] font-extrabold transition-colors duration-300 focus:outline-none group/btn"
                     aria-expanded={isExpanded}
                   >
                     <span>{isExpanded ? "Collapse Scope" : "Expand Scope & Process"}</span>
                     <ChevronDown
                       className={cn(
                         "w-3.5 h-3.5 text-black transition-transform duration-300",
-                        isExpanded ? "rotate-180" : "rotate-0"
+                        isExpanded ? "rotate-180" : "rotate-0 group-hover/btn:translate-y-0.5"
                       )}
                     />
                   </button>

@@ -12,8 +12,10 @@ import {
   StaggerItem,
   ParallaxImage,
   TextSlideFromTop,
+  MaskedHeadingReveal,
+  LuxuryMagnetic,
 } from "@/components/animations/MotionDirectional";
-import { Compass, Hammer, Layers, Sparkles, VolumeX } from "lucide-react";
+import { Compass, Hammer, Layers, Sparkles, VolumeX, ArrowUpRight } from "lucide-react";
 
 export const metadata: Metadata = constructMetadata({
   title: "About Paima | Luxury Interior Design Studio & Architectural Heritage",
@@ -44,10 +46,10 @@ export default function AboutPage() {
                 </span>
               </div>
 
-              <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-black tracking-tight leading-[1.1] max-w-5xl">
+              <MaskedHeadingReveal as="h1" className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-black tracking-tight leading-[1.1] max-w-5xl">
                 The Synthesis of Architecture, <br />
                 <span className="italic text-black">Silence, and Matter.</span>
-              </h1>
+              </MaskedHeadingReveal>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-8 border-t border-[#A78D78]/50 items-start">
@@ -80,14 +82,14 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-12">
           {/* 1. STUDIO PHILOSOPHY (HERO WIDE CARD - SPAN 7) */}
           <SlideFromLeft delay={0.1} className="md:col-span-7">
-            <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full">
+            <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full will-change-transform">
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#E1D4C2]">
                 <Image
                   src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
                   alt="Studio Philosophy - Architectural Minimalist Living Space"
                   fill
                   sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 />
                 <div className="absolute top-4 left-4 z-10">
                   <span className="px-3.5 py-1.5 bg-[#E1D4C2] text-black text-[9px] font-sans uppercase tracking-[0.25em] font-extrabold border border-black rounded-sm shadow-sm">
@@ -113,14 +115,14 @@ export default function AboutPage() {
 
           {/* 2. DESIGN APPROACH (MEDIUM CARD - SPAN 5) */}
           <SlideFromRight delay={0.2} className="md:col-span-5">
-            <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full">
+            <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full will-change-transform">
               <div className="relative aspect-square w-full overflow-hidden bg-[#E1D4C2]">
                 <Image
                   src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80"
                   alt="Design Approach - Sculptural Marble & Proportions"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 />
                 <div className="absolute top-4 left-4 z-10">
                   <span className="px-3.5 py-1.5 bg-[#E1D4C2] text-black text-[9px] font-sans uppercase tracking-[0.25em] font-extrabold border border-black rounded-sm shadow-sm">
@@ -146,7 +148,7 @@ export default function AboutPage() {
 
           {/* 3. CRAFTSMANSHIP (CARD - SPAN 4) */}
           <FadeUpBottom delay={0.1} className="md:col-span-4">
-            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
+            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6 will-change-transform">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold">
@@ -169,7 +171,7 @@ export default function AboutPage() {
 
           {/* 4. MATERIAL INTELLIGENCE (CARD - SPAN 4) */}
           <FadeUpBottom delay={0.2} className="md:col-span-4">
-            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
+            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6 will-change-transform">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold">
@@ -192,7 +194,7 @@ export default function AboutPage() {
 
           {/* 5. SPATIAL EXPERIENCE (CARD - SPAN 4) */}
           <FadeUpBottom delay={0.3} className="md:col-span-4">
-            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
+            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6 will-change-transform">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold">
@@ -215,7 +217,7 @@ export default function AboutPage() {
 
           {/* 6. ATTENTION TO DETAIL (HERO BOTTOM CARD - SPAN 12) */}
           <FadeUpBottom delay={0.25} className="md:col-span-12">
-            <div className="group relative bg-[#BEB5A9] border border-[#A78D78] p-8 sm:p-12 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="group relative bg-[#BEB5A9] border border-[#A78D78] p-8 sm:p-12 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center will-change-transform">
               <div className="lg:col-span-7 space-y-4">
                 <span className="px-3.5 py-1.5 bg-[#E1D4C2] text-black text-[9px] font-sans uppercase tracking-[0.25em] font-extrabold border border-black rounded-sm shadow-sm inline-block">
                   06 &bull; ATTENTION TO DETAIL
@@ -227,13 +229,13 @@ export default function AboutPage() {
                   True elegance resides in what is unseen: shadowline baseboards, flush frameless door reveals, floor-recessed curtain tracks, and concealed HVAC diffusers integrated into stone joints.
                 </p>
                 <div className="pt-4 flex flex-wrap gap-3">
-                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
+                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black rounded-sm">
                     Flush Door Reveals
                   </span>
-                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
+                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black rounded-sm">
                     Shadowline Skirting
                   </span>
-                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
+                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black rounded-sm">
                     Concealed Linear Diffusers
                   </span>
                 </div>
@@ -245,7 +247,7 @@ export default function AboutPage() {
                   alt="Attention to Detail - Flush Architectural Detailing"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 />
               </div>
             </div>
@@ -270,7 +272,7 @@ export default function AboutPage() {
               const isEven = idx % 2 === 0;
               const RevealComponent = isEven ? SlideFromRight : SlideFromLeft;
               return (
-                <RevealComponent key={item.year} delay={0.1 * idx}>
+                <RevealComponent key={item.year} delay={0.08 * idx}>
                   <div
                     className={`relative flex flex-col md:flex-row items-start ${
                       isEven ? "md:flex-row-reverse" : ""
@@ -293,7 +295,7 @@ export default function AboutPage() {
                       </p>
                     </div>
 
-                    <div className="hidden md:flex absolute left-1/2 top-8 -translate-x-1/2 w-7 h-7 rounded-full bg-[#E1D4C2] border border-black items-center justify-center z-10">
+                    <div className="hidden md:flex absolute left-1/2 top-8 -translate-x-1/2 w-7 h-7 rounded-full bg-[#E1D4C2] border border-black items-center justify-center z-10 shadow-sm">
                       <span className="w-2 h-2 rounded-full bg-black" />
                     </div>
                   </div>
@@ -318,12 +320,15 @@ export default function AboutPage() {
               We look forward to understanding your aspirations, lifestyle, and architectural preferences.
             </p>
             <div className="pt-4">
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#E1D4C2] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.2em] font-extrabold transition-all duration-300 shadow-xl border border-black"
-              >
-                <span>SCHEDULE PRIVATE CONSULTATION &rarr;</span>
-              </Link>
+              <LuxuryMagnetic strength={10} className="inline-block">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#E1D4C2] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.2em] font-extrabold transition-all duration-300 shadow-xl border border-black hover:scale-105"
+                >
+                  <span>SCHEDULE PRIVATE CONSULTATION</span>
+                  <ArrowUpRight className="w-4 h-4 text-black transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+              </LuxuryMagnetic>
             </div>
           </div>
         </TextSlideFromTop>

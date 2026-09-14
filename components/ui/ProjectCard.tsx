@@ -28,7 +28,7 @@ export function ProjectCard({
 
   return (
     <article
-      className="group relative overflow-hidden bg-[#BEB5A9] border border-[#A78D78] rounded-sm shadow-xl transition-all duration-500 hover:border-black"
+      className="group relative overflow-hidden bg-[#BEB5A9] border border-[#A78D78] rounded-xl shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-black hover:shadow-2xl will-change-transform"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -39,23 +39,23 @@ export function ProjectCard({
           fill
           priority={priority}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
+          className="object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.04]"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2] via-[#E1D4C2]/40 to-transparent opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2] via-[#E1D4C2]/40 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-95" />
 
         {/* Top Badges */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-          <span className="px-3 py-1 bg-[#E1D4C2]/95 backdrop-blur-md text-[9px] font-sans uppercase tracking-[0.2em] font-extrabold text-black border border-black">
+          <span className="px-3 py-1 bg-[#E1D4C2]/95 backdrop-blur-md text-[9px] font-sans uppercase tracking-[0.2em] font-extrabold text-black border border-black rounded-sm shadow-sm transition-transform duration-300 group-hover:scale-105">
             {project.category}
           </span>
-          <span className="text-[11px] font-sans tracking-widest text-black font-extrabold bg-[#E1D4C2]/80 px-2 py-0.5 border border-black/40">
+          <span className="text-[11px] font-sans tracking-widest text-black font-extrabold bg-[#E1D4C2]/80 px-2 py-0.5 border border-black/40 rounded-sm">
             {project.location}
           </span>
         </div>
 
         {/* Hover-Reveal Spec Drawer */}
-        <div className="absolute bottom-0 inset-x-0 p-6 z-10 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="absolute bottom-0 inset-x-0 p-6 z-10 translate-y-3 opacity-0 transition-all duration-400 ease-out group-hover:translate-y-0 group-hover:opacity-100">
           <div className="space-y-2">
             <div className="flex items-baseline justify-between text-black">
               <h3 className="font-serif text-xl sm:text-2xl font-extrabold text-black">
@@ -72,12 +72,12 @@ export function ProjectCard({
               {project.materials.slice(0, 3).map((mat) => (
                 <span
                   key={mat}
-                  className="text-[9px] uppercase tracking-wider text-black font-extrabold bg-[#E1D4C2] px-2 py-0.5 border border-black"
+                  className="text-[9px] uppercase tracking-wider text-black font-extrabold bg-[#E1D4C2] px-2 py-0.5 border border-black rounded-xs"
                 >
                   {mat}
                 </span>
               ))}
-              <span className="text-[9px] uppercase tracking-wider text-black bg-[#A78D78] font-extrabold px-2 py-0.5 border border-black">
+              <span className="text-[9px] uppercase tracking-wider text-black bg-[#A78D78] font-extrabold px-2 py-0.5 border border-black rounded-xs">
                 {project.area}
               </span>
             </div>
@@ -86,7 +86,7 @@ export function ProjectCard({
       </div>
 
       {/* Static Sub-Bar */}
-      <div className="p-4 flex items-center justify-between bg-[#E1D4C2] border-t border-[#A78D78]">
+      <div className="p-4 flex items-center justify-between bg-[#E1D4C2] border-t border-[#A78D78] transition-colors duration-300 group-hover:bg-[#E1D4C2]/90">
         <div>
           <h4 className="font-serif text-lg text-black font-extrabold tracking-tight">
             {project.title}
@@ -97,10 +97,10 @@ export function ProjectCard({
         </div>
         <Link
           href={`/portfolio?highlight=${project.slug}`}
-          className="text-[11px] font-sans uppercase tracking-[0.18em] text-black hover:text-[#6E4738] transition-colors flex items-center gap-1 font-extrabold"
+          className="text-[11px] font-sans uppercase tracking-[0.18em] text-black hover:text-[#6E4738] transition-colors flex items-center gap-1 font-extrabold group/link"
         >
-          View
-          <ArrowUpRight className="w-3.5 h-3.5 text-black" />
+          <span>View</span>
+          <ArrowUpRight className="w-3.5 h-3.5 text-black transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
         </Link>
       </div>
     </article>

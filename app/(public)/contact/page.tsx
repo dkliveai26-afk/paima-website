@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { constructMetadata, generateFAQSchema } from "@/lib/seo";
 import { AGENCY_INFO } from "@/lib/data";
 import { ContactForm } from "@/components/ui/ContactForm";
-import { SlideFromLeft, SlideFromRight, FadeUpBottom } from "@/components/animations/MotionDirectional";
+import {
+  SlideFromLeft,
+  SlideFromRight,
+  FadeUpBottom,
+  MaskedHeadingReveal,
+} from "@/components/animations/MotionDirectional";
 
 export const metadata: Metadata = constructMetadata({
   title: "Private Inquiries & Studio Concierge | Paima Luxury Interiors",
@@ -54,25 +59,29 @@ export default function ContactPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         {/* Left Column */}
         <div className="lg:col-span-5 space-y-10">
-          <SlideFromLeft>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-8 h-[2px] bg-black" />
-              <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold">
-                CLIENT CONCIERGE
-              </span>
-            </div>
+          <div className="space-y-4">
+            <SlideFromLeft>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-8 h-[2px] bg-black" />
+                <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold">
+                  CLIENT CONCIERGE
+                </span>
+              </div>
+            </SlideFromLeft>
 
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-black tracking-tight leading-[1.1]">
+            <MaskedHeadingReveal as="h1" className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-black tracking-tight leading-[1.1]">
               Begin A <br />
               <span className="italic text-black">Private Dialogue.</span>
-            </h1>
+            </MaskedHeadingReveal>
 
-            <p className="mt-6 font-sans text-sm text-black font-semibold leading-relaxed">
-              Every commission begins with an open conversation regarding spatial ambition, materiality, and emotional resonance. We welcome private residential inquiries in Kolkata, India, and worldwide.
-            </p>
-          </SlideFromLeft>
+            <SlideFromLeft delay={0.12}>
+              <p className="mt-4 font-sans text-sm text-black font-semibold leading-relaxed">
+                Every commission begins with an open conversation regarding spatial ambition, materiality, and emotional resonance. We welcome private residential inquiries in Kolkata, India, and worldwide.
+              </p>
+            </SlideFromLeft>
+          </div>
 
-          <SlideFromLeft delay={0.15}>
+          <SlideFromLeft delay={0.2}>
             <div className="space-y-6 pt-6 border-t border-[#A78D78]/50">
               <div className="space-y-1">
                 <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-black font-extrabold">
@@ -113,21 +122,21 @@ export default function ContactPage() {
 
       {/* FREQUENTLY ASKED QUESTIONS */}
       <section aria-label="Frequently Asked Questions" className="mt-28 pt-16 border-t border-[#A78D78]/50">
-        <FadeUpBottom>
-          <div className="mb-12">
-            <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold block mb-2">
+        <div className="mb-12 space-y-2">
+          <SlideFromLeft>
+            <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold block">
               HELPFUL INFORMATION
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-black tracking-tight">
-              Frequently Asked Questions
-            </h2>
-          </div>
-        </FadeUpBottom>
+          </SlideFromLeft>
+          <MaskedHeadingReveal as="h2" className="font-serif text-3xl sm:text-4xl font-bold text-black tracking-tight">
+            Frequently Asked Questions
+          </MaskedHeadingReveal>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {PAIMA_FAQS.map((faq, idx) => (
-            <FadeUpBottom key={idx} delay={0.1 * idx}>
-              <div className="bg-[#BEB5A9]/50 p-6 sm:p-8 rounded-2xl border border-[#A78D78]/50 space-y-3 shadow-lg">
+            <FadeUpBottom key={idx} delay={0.08 * idx}>
+              <div className="bg-[#BEB5A9]/50 p-6 sm:p-8 rounded-2xl border border-[#A78D78]/50 space-y-3 shadow-lg hover:border-black hover:-translate-y-1 transition-all duration-400">
                 <h3 className="font-serif text-lg text-black font-extrabold">
                   {faq.question}
                 </h3>

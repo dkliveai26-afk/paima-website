@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { PROJECTS, type Project } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import { Element3DReveal } from "@/components/animations/MotionDirectional";
+import { Element3DReveal, luxuryEase } from "@/components/animations/MotionDirectional";
 
 const CATEGORIES = ["All", "Minimalist", "Modern", "Vintage", "Penthouse"] as const;
 
@@ -32,10 +32,10 @@ export function PortfolioMasonry() {
                 type="button"
                 onClick={() => setActiveCategory(cat)}
                 className={cn(
-                  "relative px-5 py-2.5 text-[11px] font-sans uppercase tracking-[0.18em] transition-all duration-300 rounded-full border focus:outline-none",
+                  "relative px-5 py-2.5 text-[11px] font-sans uppercase tracking-[0.18em] transition-all duration-300 rounded-full border focus:outline-none will-change-transform",
                   isActive
-                    ? "bg-[#A78D78] text-black border-black font-extrabold shadow-md"
-                    : "bg-[#BEB5A9]/60 text-black border-[#A78D78]/50 hover:border-black hover:bg-[#BEB5A9] font-bold"
+                    ? "bg-[#A78D78] text-black border-black font-extrabold shadow-md scale-105"
+                    : "bg-[#BEB5A9]/60 text-black border-[#A78D78]/50 hover:border-black hover:bg-[#BEB5A9] font-bold hover:scale-102"
                 )}
               >
                 <span>{cat}</span>
@@ -60,9 +60,9 @@ export function PortfolioMasonry() {
               idx % 3 === 0 ? "aspect-[3/4]" : idx % 3 === 1 ? "aspect-[4/5]" : "aspect-[1/1]";
 
             return (
-              <Element3DReveal key={project.id} delay={0.1 * idx}>
+              <Element3DReveal key={project.id} delay={0.07 * idx}>
                 <article
-                  className="group relative bg-[#BEB5A9]/60 overflow-hidden rounded-2xl border border-[#A78D78]/50 hover:-translate-y-1.5 hover:border-black transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl"
+                  className="group relative bg-[#BEB5A9]/60 overflow-hidden rounded-2xl border border-[#A78D78]/50 hover:-translate-y-1.5 hover:border-black transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl will-change-transform"
                   onClick={() => setSelectedProject(project)}
                 >
                   <div className={cn("relative w-full overflow-hidden bg-[#E1D4C2]", aspectPattern)}>
@@ -71,15 +71,15 @@ export function PortfolioMasonry() {
                       alt={`${project.title} - ${project.category} luxury interior architecture by Paima`}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.03]"
+                      className="object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.04]"
                     />
 
                     {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2] via-transparent to-transparent opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2] via-transparent to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-95" />
 
                     {/* Top Badges */}
                     <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                      <span className="px-3 py-1 bg-[#E1D4C2] text-[9px] font-sans uppercase tracking-[0.2em] text-black font-extrabold rounded-sm border border-black">
+                      <span className="px-3 py-1 bg-[#E1D4C2] text-[9px] font-sans uppercase tracking-[0.2em] text-black font-extrabold rounded-sm border border-black shadow-sm">
                         {project.category}
                       </span>
                       <span className="text-[10px] font-mono text-black bg-[#E1D4C2] px-2 py-0.5 rounded-sm border border-black font-extrabold">
@@ -91,7 +91,7 @@ export function PortfolioMasonry() {
                     <div className="absolute bottom-0 inset-x-0 p-6 z-10 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400 bg-gradient-to-t from-[#E1D4C2] via-[#E1D4C2]/95 to-transparent pt-12 text-black">
                       <div className="flex items-baseline justify-between mb-2">
                         <h3 className="font-serif text-2xl font-extrabold text-black">{project.title}</h3>
-                        <ArrowUpRight className="w-5 h-5 text-black transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        <ArrowUpRight className="w-5 h-5 text-black transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                       </div>
 
                       <div className="flex items-center gap-2 text-black text-xs mb-3 font-extrabold">
@@ -128,7 +128,7 @@ export function PortfolioMasonry() {
                         {project.location} &bull; {project.area}
                       </p>
                     </div>
-                    <span className="text-[10px] font-sans uppercase tracking-[0.18em] text-black font-extrabold flex items-center gap-1 transition-colors duration-300">
+                    <span className="text-[10px] font-sans uppercase tracking-[0.18em] text-black font-extrabold flex items-center gap-1 transition-colors duration-300 group-hover:translate-x-0.5">
                       <span>Details</span>
                       <span className="transition-transform group-hover:translate-x-1 duration-300">&rarr;</span>
                     </span>
@@ -151,7 +151,7 @@ export function PortfolioMasonry() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.4, ease: luxuryEase }}
               className="bg-[#E1D4C2] border border-[#A78D78] max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative rounded-2xl text-black"
               onClick={(e) => e.stopPropagation()}
             >
@@ -164,7 +164,7 @@ export function PortfolioMasonry() {
                 />
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="absolute top-4 right-4 bg-[#A78D78] hover:bg-[#BEB5A9] text-black px-4 py-2 text-xs uppercase tracking-[0.2em] font-extrabold transition-all duration-300 rounded-full shadow-lg border border-black"
+                  className="absolute top-4 right-4 bg-[#A78D78] hover:bg-[#BEB5A9] text-black px-4 py-2 text-xs uppercase tracking-[0.2em] font-extrabold transition-all duration-300 rounded-full shadow-lg border border-black hover:scale-105"
                 >
                   Close &times;
                 </button>
