@@ -167,11 +167,8 @@ export function LuxuryMinimalistHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-[0.92] contrast-[1.02]"
+          className="object-cover object-center brightness-[0.96]"
         />
-
-        {/* Ambient Subtle Warm Vignette Overlay (Leaves image 100% visible and breathing) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2]/40 via-transparent to-transparent pointer-events-none" />
       </motion.div>
 
       {/* =========================================================================
@@ -191,7 +188,7 @@ export function LuxuryMinimalistHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-[0.95]"
+          className="object-cover object-center brightness-[0.96]"
         />
       </motion.div>
 
@@ -209,7 +206,7 @@ export function LuxuryMinimalistHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-[0.95]"
+          className="object-cover object-center brightness-[0.96]"
         />
       </motion.div>
 
@@ -229,9 +226,12 @@ export function LuxuryMinimalistHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-[0.98]"
+          className="object-cover object-center brightness-[0.96]"
         />
       </motion.div>
+
+      {/* Ambient Subtle Warm Vignette Overlay across all layers for unified lighting */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2]/30 via-transparent to-transparent pointer-events-none z-25" />
 
       {/* =========================================================================
           HERO UI: CLEAN CINEMATIC FLOATING EXPLORE CTA (z-30)
