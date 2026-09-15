@@ -47,7 +47,22 @@ export async function seedKnowledgeBase() {
   console.log("Successfully seeded PAIMA AI knowledge base to MongoDB.");
 }
 
-export async function getKnowledgeBaseContext(): Promise<string> {
+// In-memory cached system context with 10-minute TTL to eliminate database latency on chat path
+let cachedKnowledgeContext: string | null = null;
+let lastContextFetchTime = 0;
+const CACHE_TTL_MS = 10 * 60 * 1000;
+
+export function invalidateKnowledgeBaseCache() {
+  cachedKnowledgeContext = null;
+  lastContextFetchTime = 0;
+}
+
+export async function getKnowledgeBaseContext(forceRefresh = false): Promise<string> {
+  const now = Date.now();
+  if (!forceRefresh && cachedKnowledgeContext && (now - lastContextFetchTime < CACHE_TTL_MS)) {
+    return cachedKnowledgeContext;
+  }
+
   let agency = AGENCY_INFO;
   let services = SERVICES;
   let projects = PROJECTS;
@@ -56,15 +71,24 @@ export async function getKnowledgeBaseContext(): Promise<string> {
     try {
       const db = await getMongoDb();
       if (db) {
-        await seedKnowledgeBase();
         const collection = db.collection<KnowledgeDocument>("ai_knowledge");
-        const agencyDoc = await collection.findOne({ type: "AGENCY_INFO" });
-        const servicesDoc = await collection.findOne({ type: "SERVICES" });
-        const projectsDoc = await collection.findOne({ type: "PROJECTS" });
+        // Parallel queries to fetch knowledge documents concurrently
+        const [agencyDoc, servicesDoc, projectsDoc] = await Promise.all([
+          collection.findOne({ type: "AGENCY_INFO" }),
+          collection.findOne({ type: "SERVICES" }),
+          collection.findOne({ type: "PROJECTS" }),
+        ]);
 
         if (agencyDoc?.content) agency = agencyDoc.content;
         if (servicesDoc?.content) services = servicesDoc.content;
         if (projectsDoc?.content) projects = projectsDoc.content;
+
+        // If documents are missing, trigger seeding in the background without blocking
+        if (!agencyDoc && !servicesDoc && !projectsDoc) {
+          seedKnowledgeBase().catch((err) =>
+            console.warn("Background seed notice:", err)
+          );
+        }
       }
     } catch (e) {
       console.warn("MongoDB knowledge fetch fallback to static data:", e);
@@ -97,7 +121,7 @@ export async function getKnowledgeBaseContext(): Promise<string> {
     ? agency.stats.map((s: any) => `- ${s.label}: ${s.value}`).join("\n")
     : "";
 
-  return `
+  const builtContext = `
 You are the official digital concierge for PAIMA (Paima Luxury Interiors & Prime Real Estate Group).
 You speak on behalf of PAIMA with discrete luxury, calm warmth, professional authority, and concise clarity.
 
@@ -156,4 +180,8 @@ ${projectsList}
 6. **Privacy & Security**:
    - Never expose or discuss admin data, customer records, private bookings, audit logs, or backend settings.
 `.trim();
+
+  cachedKnowledgeContext = builtContext;
+  lastContextFetchTime = now;
+  return cachedKnowledgeContext;
 }

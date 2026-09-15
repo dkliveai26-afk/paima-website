@@ -2,6 +2,9 @@ import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import { getKnowledgeBaseContext } from "@/lib/db-knowledge";
 
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
 function cleanApiKey(raw: string | undefined): string {
   if (!raw) return "";
   let key = raw.trim();
@@ -17,13 +20,27 @@ function cleanApiKey(raw: string | undefined): string {
   return key;
 }
 
+// Module-level singleton client to reuse open TLS connection pool
+let cachedOpenAI: OpenAI | null = null;
+let lastApiKey: string | null = null;
+
+function getOpenAIClient(): OpenAI | null {
+  const apiKey = cleanApiKey(process.env.OPENAI_API_KEY);
+  if (!apiKey) return null;
+  if (!cachedOpenAI || lastApiKey !== apiKey) {
+    cachedOpenAI = new OpenAI({ apiKey });
+    lastApiKey = apiKey;
+  }
+  return cachedOpenAI;
+}
+
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    const openaiKey = cleanApiKey(process.env.OPENAI_API_KEY);
+    const openai = getOpenAIClient();
 
-    if (!openaiKey) {
+    if (!openai) {
       console.error("Missing OPENAI_API_KEY environment variable.");
       return NextResponse.json(
         { error: "Configuration error. AI services are currently unavailable." },
@@ -31,11 +48,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const openai = new OpenAI({ apiKey: openaiKey });
+    // Fast cached context retrieval (<0.01ms on cache hit)
     const systemContext = await getKnowledgeBaseContext();
 
+    // Preserve the last 12 messages for full multi-turn conversation memory while preventing unbounded token prefill
     const formattedMessages = Array.isArray(messages)
-      ? messages.map((m: any) => {
+      ? messages.slice(-12).map((m: any) => {
           let text = "";
           if (typeof m.content === "string") {
             text = m.content;
@@ -92,6 +110,7 @@ export async function POST(req: Request) {
         "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
         Connection: "keep-alive",
+        "X-Accel-Buffering": "no",
       },
     });
   } catch (error: any) {
