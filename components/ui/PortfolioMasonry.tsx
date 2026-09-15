@@ -53,7 +53,7 @@ export function PortfolioMasonry() {
       </div>
 
       {/* ================= MASONRY GRID WITH 3D REVEAL ================= */}
-      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         <AnimatePresence>
           {filteredProjects.map((project, idx) => {
             const aspectPattern =

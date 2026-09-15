@@ -80,7 +80,7 @@ export default function AboutPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 mt-8 sm:mt-12">
           {/* 1. STUDIO PHILOSOPHY (HERO WIDE CARD - SPAN 7) */}
-          <SlideFromLeft delay={0.1} className="md:col-span-7">
+          <SlideFromLeft delay={0.1} className="col-span-1 md:col-span-12 lg:col-span-7">
             <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full">
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#E1D4C2]">
                 <Image
@@ -113,7 +113,7 @@ export default function AboutPage() {
           </SlideFromLeft>
 
           {/* 2. DESIGN APPROACH (MEDIUM CARD - SPAN 5) */}
-          <SlideFromRight delay={0.2} className="md:col-span-5">
+          <SlideFromRight delay={0.2} className="col-span-1 md:col-span-12 lg:col-span-5">
             <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full">
               <div className="relative aspect-square w-full overflow-hidden bg-[#E1D4C2]">
                 <Image
@@ -146,7 +146,7 @@ export default function AboutPage() {
           </SlideFromRight>
 
           {/* 3. CRAFTSMANSHIP (CARD - SPAN 4) */}
-          <SlowCardReveal delay={0.1} className="md:col-span-4">
+          <SlowCardReveal delay={0.1} className="col-span-1 md:col-span-6 lg:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -169,7 +169,7 @@ export default function AboutPage() {
           </SlowCardReveal>
 
           {/* 4. MATERIAL INTELLIGENCE (CARD - SPAN 4) */}
-          <SlowCardReveal delay={0.24} className="md:col-span-4">
+          <SlowCardReveal delay={0.24} className="col-span-1 md:col-span-6 lg:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -192,7 +192,7 @@ export default function AboutPage() {
           </SlowCardReveal>
 
           {/* 5. SPATIAL EXPERIENCE (CARD - SPAN 4) */}
-          <SlowCardReveal delay={0.38} className="md:col-span-4">
+          <SlowCardReveal delay={0.38} className="col-span-1 md:col-span-12 lg:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -215,7 +215,7 @@ export default function AboutPage() {
           </SlowCardReveal>
 
           {/* 6. ATTENTION TO DETAIL (HERO BOTTOM CARD - SPAN 12) */}
-          <SlowCardReveal delay={0.2} className="md:col-span-12">
+          <SlowCardReveal delay={0.2} className="col-span-1 md:col-span-12 lg:col-span-12">
             <div className="group relative bg-[#BEB5A9] border border-[#A78D78] p-6 sm:p-12 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-7 space-y-4">
                 <span className="px-3.5 py-1.5 bg-[#E1D4C2] text-black text-[9px] font-sans uppercase tracking-[0.25em] font-extrabold border border-black rounded-sm shadow-sm inline-block">

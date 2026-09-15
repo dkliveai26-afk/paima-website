@@ -149,7 +149,7 @@ export function LuxuryMinimalistHero() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-label="Paima Luxury Architectural Hero - Crafted for Living"
-      className="relative w-full h-[100svh] min-h-[560px] sm:min-h-[700px] max-h-[1100px] overflow-hidden select-none bg-[#E1D4C2] flex flex-col justify-end"
+      className="relative w-full h-[88svh] min-h-[520px] max-h-[750px] sm:h-[92svh] sm:min-h-[640px] lg:h-[100svh] lg:min-h-[700px] lg:max-h-[1100px] overflow-hidden select-none bg-[#E1D4C2] flex flex-col justify-end"
     >
       {/* =========================================================================
           LAYER 1: BACKGROUND ROOM ARCHITECTURE (z-0)
@@ -167,7 +167,7 @@ export function LuxuryMinimalistHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-[0.96]"
+          className="object-cover object-[center_35%] sm:object-[center_40%] lg:object-center brightness-[0.96]"
         />
       </motion.div>
 
@@ -188,7 +188,7 @@ export function LuxuryMinimalistHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-[0.96]"
+          className="object-cover object-[center_35%] sm:object-[center_40%] lg:object-center brightness-[0.96]"
         />
       </motion.div>
 
@@ -206,7 +206,7 @@ export function LuxuryMinimalistHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-[0.96]"
+          className="object-cover object-[center_35%] sm:object-[center_40%] lg:object-center brightness-[0.96]"
         />
       </motion.div>
 
@@ -226,12 +226,12 @@ export function LuxuryMinimalistHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-[0.96]"
+          className="object-cover object-[center_35%] sm:object-[center_40%] lg:object-center brightness-[0.96]"
         />
       </motion.div>
 
       {/* Ambient Subtle Warm Vignette Overlay across all layers for unified lighting */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2]/30 via-transparent to-transparent pointer-events-none z-25" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2]/40 via-transparent to-transparent pointer-events-none z-25" />
 
       {/* =========================================================================
           HERO UI: CLEAN CINEMATIC FLOATING EXPLORE CTA (z-30)
@@ -242,7 +242,7 @@ export function LuxuryMinimalistHero() {
         variants={bottomContentVariants}
         initial="initial"
         animate="animate"
-        className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pb-8 sm:pb-16 pt-8 flex justify-center sm:justify-end pointer-events-auto"
+        className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pb-6 sm:pb-12 lg:pb-16 pt-4 flex justify-center sm:justify-end pointer-events-auto"
       >
         <Link
           href="/portfolio"

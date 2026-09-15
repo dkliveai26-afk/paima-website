@@ -21,7 +21,7 @@ export function BentoGridServices() {
         const isExpanded = expandedId === service.id;
 
         return (
-          <SlowCardReveal key={service.id} delay={0.14 * idx} className={cn("w-full", service.span)}>
+          <SlowCardReveal key={service.id} delay={0.14 * idx} className={cn("w-full md:col-span-6", service.span)}>
             <motion.div
               layout
               className={cn(
