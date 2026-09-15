@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { luxuryEase } from "@/components/animations/MotionDirectional";
@@ -14,6 +14,14 @@ interface SectionHeadingProps {
   light?: boolean;
 }
 
+function useIsClient() {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  return isClient;
+}
+
 export function SectionHeading({
   eyebrow,
   title,
@@ -21,6 +29,7 @@ export function SectionHeading({
   align = "left",
   className,
 }: SectionHeadingProps) {
+  const isClient = useIsClient();
   const shouldReduceMotion = useReducedMotion();
 
   const alignments = {
@@ -29,7 +38,7 @@ export function SectionHeading({
     right: "text-right items-end ml-auto",
   };
 
-  if (shouldReduceMotion) {
+  if (!isClient || shouldReduceMotion) {
     return (
       <div className={cn("flex flex-col mb-12 md:mb-16", alignments[align], className)}>
         {eyebrow && (
@@ -54,42 +63,48 @@ export function SectionHeading({
 
   return (
     <div className={cn("flex flex-col mb-12 md:mb-16", alignments[align], className)}>
-      {/* Eyebrow Reveal */}
+      {/* 1. Eyebrow Reveal */}
       {eyebrow && (
         <motion.div
           initial={{ opacity: 0, x: -16 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.7, ease: luxuryEase }}
+          viewport={{ once: true, margin: "-30px" }}
+          transition={{ duration: 0.65, ease: luxuryEase }}
           className="flex items-center gap-3 mb-3"
         >
-          <span className="w-8 h-[2px] bg-black" />
+          <motion.span
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.75, delay: 0.1, ease: luxuryEase }}
+            className="w-8 h-[2px] bg-black origin-left"
+          />
           <span className="text-[11px] font-sans tracking-[0.2em] uppercase font-extrabold text-black">
             {eyebrow}
           </span>
         </motion.div>
       )}
 
-      {/* Masked Heading Reveal */}
+      {/* 2. Masked Heading Reveal */}
       <div className="overflow-hidden">
         <motion.h2
           initial={{ y: "105%", opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.85, delay: 0.06, ease: luxuryEase }}
+          viewport={{ once: true, margin: "-30px" }}
+          transition={{ duration: 0.85, delay: 0.08, ease: luxuryEase }}
           className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.15] text-black"
         >
           {title}
         </motion.h2>
       </div>
 
-      {/* Subtitle Fade In */}
+      {/* 3. Subtitle Reveal */}
       {subtitle && (
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.8, delay: 0.16, ease: luxuryEase }}
+          viewport={{ once: true, margin: "-30px" }}
+          transition={{ duration: 0.8, delay: 0.2, ease: luxuryEase }}
           className="mt-4 font-sans text-sm md:text-base max-w-2xl font-semibold leading-relaxed text-black"
         >
           {subtitle}
@@ -98,3 +113,4 @@ export function SectionHeading({
     </div>
   );
 }
+

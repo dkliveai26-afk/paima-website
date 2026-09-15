@@ -3,7 +3,6 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/animations/SmoothScroll";
 import PaimaConcierge from "@/components/ui/PaimaConcierge";
-import { PageTransitionWrapper } from "@/components/animations/MotionDirectional";
 
 export default function PublicLayout({
   children,
@@ -20,9 +19,7 @@ export default function PublicLayout({
       </a>
       <Navbar />
       <main id="main-content" className="relative min-h-screen w-full overflow-x-clip">
-        <PageTransitionWrapper>
-          {children}
-        </PageTransitionWrapper>
+        {children}
       </main>
       <Footer />
       <PaimaConcierge />

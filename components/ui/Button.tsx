@@ -23,7 +23,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    "inline-flex items-center justify-center font-sans tracking-[0.2em] text-xs uppercase font-bold transition-all duration-300 ease-out focus:outline-none disabled:opacity-50 disabled:pointer-events-none group rounded-full will-change-transform hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]";
+    "inline-flex items-center justify-center font-sans tracking-[0.2em] text-xs uppercase font-bold transition-all duration-300 ease-out focus:outline-none disabled:opacity-50 disabled:pointer-events-none group rounded-full hover:-translate-y-0.5 active:scale-[0.98]";
 
   const sizeStyles = {
     sm: "px-5 py-2.5 text-[11px]",
@@ -35,7 +35,7 @@ export function Button({
     primary:
       "bg-[#A78D78] text-black hover:bg-[#BEB5A9] shadow-xl hover:shadow-2xl border border-black font-extrabold",
     outline:
-      "bg-transparent text-black border border-black hover:bg-[#BEB5A9]/60 font-extrabold hover:shadow-md",
+      "bg-transparent text-black border border-black hover:bg-[#BEB5A9]/50 font-extrabold",
     champagne:
       "bg-[#E1D4C2] text-black hover:bg-[#BEB5A9] shadow-xl hover:shadow-2xl border border-black font-extrabold",
     ghost:
@@ -44,11 +44,11 @@ export function Button({
 
   const content = (
     <>
-      <span className="transition-transform duration-300">{children}</span>
+      <span>{children}</span>
       {showArrow && (
         <ArrowUpRight
           className={cn(
-            "ml-2 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 text-black"
+            "ml-2 w-3.5 h-3.5 transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:-translate-y-0.5 text-black"
           )}
         />
       )}
@@ -75,3 +75,4 @@ export function Button({
     </button>
   );
 }
+
