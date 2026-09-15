@@ -53,9 +53,9 @@ export function PaimaHomeContent() {
       {/* ================= FEATURED ESTATES & INTERIORS ================= */}
       <section
         aria-label="Prime Curated Properties"
-        className="py-24 sm:py-32 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto"
+        className="py-16 sm:py-24 lg:py-32 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto"
       >
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
           <SlideFromLeft>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
@@ -64,7 +64,7 @@ export function PaimaHomeContent() {
                   CURATED MONOGRAPH
                 </span>
               </div>
-              <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold text-black tracking-tight">
+              <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold text-black tracking-tight break-words">
                 Prime Estates &amp; Interiors
               </h2>
               <p className="font-sans text-xs sm:text-sm text-black font-semibold max-w-xl leading-relaxed">
@@ -76,7 +76,7 @@ export function PaimaHomeContent() {
           <SlideFromRight delay={0.15}>
             <Link
               href="/portfolio"
-              className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.2em] font-extrabold text-black hover:text-[#A78D78] transition-colors duration-300 pb-2 border-b border-black group"
+              className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.2em] font-extrabold text-black hover:text-[#A78D78] transition-colors duration-300 pb-2 border-b border-black group min-h-[44px]"
             >
               <span>EXPLORE ALL ESTATES ({PROJECTS.length})</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-black transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -85,7 +85,7 @@ export function PaimaHomeContent() {
         </div>
 
         {/* 3-Card Architectural Slide Reveal */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {topProjects.map((project, idx) => {
             // Unanimated fallback for SSR / Reduced Motion
             if (!isClient || shouldReduceMotion) {
@@ -114,18 +114,18 @@ export function PaimaHomeContent() {
                       </div>
                     </div>
 
-                    <div className="p-6 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between">
-                      <div>
-                        <h3 className="font-serif text-xl text-black font-extrabold">
+                    <div className="p-5 sm:p-6 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between">
+                      <div className="min-w-0 pr-3">
+                        <h3 className="font-serif text-lg sm:text-xl text-black font-extrabold truncate">
                           {project.title}
                         </h3>
-                        <p className="text-[11px] text-black font-sans tracking-wide uppercase mt-1 font-bold">
+                        <p className="text-[11px] text-black font-sans tracking-wide uppercase mt-1 font-bold truncate">
                           {project.location} &bull; {project.area}
                         </p>
                       </div>
                       <Link
                         href="/portfolio"
-                        className="p-2.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black transition-colors shadow-md border border-black"
+                        className="min-w-[44px] min-h-[44px] rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black transition-colors shadow-md border border-black flex items-center justify-center shrink-0"
                         aria-label={`View ${project.title}`}
                       >
                         <ArrowUpRight className="w-4 h-4 text-black" />
@@ -204,18 +204,18 @@ export function PaimaHomeContent() {
                   </div>
 
                   {/* Card Info */}
-                  <div className="p-6 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between">
-                    <div>
-                      <h3 className="font-serif text-xl text-black font-extrabold">
+                  <div className="p-5 sm:p-6 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between">
+                    <div className="min-w-0 pr-3">
+                      <h3 className="font-serif text-lg sm:text-xl text-black font-extrabold truncate">
                         {project.title}
                       </h3>
-                      <p className="text-[11px] text-black font-sans tracking-wide uppercase mt-1 font-bold">
+                      <p className="text-[11px] text-black font-sans tracking-wide uppercase mt-1 font-bold truncate">
                         {project.location} &bull; {project.area}
                       </p>
                     </div>
                     <Link
                       href="/portfolio"
-                      className="p-2.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black transition-colors shadow-md border border-black"
+                      className="min-w-[44px] min-h-[44px] rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black transition-colors shadow-md border border-black flex items-center justify-center shrink-0"
                       aria-label={`View ${project.title}`}
                     >
                       <ArrowUpRight className="w-4 h-4 text-black" />
@@ -231,10 +231,10 @@ export function PaimaHomeContent() {
       {/* ================= ABOUT US SECTION ================= */}
       <section
         aria-label="About Paima Ethos"
-        className="py-24 sm:py-32 bg-[#BEB5A9]/50 border-y border-[#A78D78]/50 relative"
+        className="py-16 sm:py-24 lg:py-32 bg-[#BEB5A9]/50 border-y border-[#A78D78]/50 relative"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             {/* Left Image Mask Reveal with Parallax */}
             <div className="lg:col-span-6 relative">
               <ImageClipReveal>
@@ -253,7 +253,7 @@ export function PaimaHomeContent() {
             </div>
 
             {/* Right Side Text Slide From Right */}
-            <div className="lg:col-span-6 space-y-8">
+            <div className="lg:col-span-6 space-y-6 sm:space-y-8">
               <SlideFromRight>
                 <div className="flex items-center gap-3 mb-3">
                   <span className="w-8 h-[2px] bg-black" />
@@ -261,14 +261,14 @@ export function PaimaHomeContent() {
                     ABOUT PAIMA GROUP
                   </span>
                 </div>
-                <h2 className="font-serif text-3xl sm:text-5xl font-bold text-black tracking-tight leading-[1.15]">
+                <h2 className="font-serif text-3xl sm:text-5xl font-bold text-black tracking-tight leading-[1.15] break-words">
                   Subtractive Architecture &amp; <br />
                   <span className="italic text-black">Prime Real Estate Authority.</span>
                 </h2>
               </SlideFromRight>
 
               <SlideFromRight delay={0.15}>
-                <p className="font-sans text-sm sm:text-base text-black font-semibold leading-relaxed">
+                <p className="font-sans text-xs sm:text-base text-black font-semibold leading-relaxed">
                   Founded to transcend traditional brokerage, Paima merges the highest tiers of luxury real estate representation with bespoke spatial interior architecture. We advise collectors, family offices, and discerning individuals on acquiring, building, and styling exceptional residential properties.
                 </p>
               </SlideFromRight>
@@ -298,10 +298,10 @@ export function PaimaHomeContent() {
               </FadeUpBottom>
 
               <FadeUpBottom delay={0.45}>
-                <div className="pt-4">
+                <div className="pt-2 sm:pt-4">
                   <Link
                     href="/about"
-                    className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black text-xs font-sans uppercase tracking-[0.2em] font-extrabold transition-all duration-300 shadow-xl border border-black"
+                    className="inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black text-xs font-sans uppercase tracking-[0.2em] font-extrabold transition-all duration-300 shadow-xl border border-black w-full sm:w-auto min-h-[48px]"
                   >
                     <span>OUR HERITAGE &amp; LEADERSHIP</span>
                     <ArrowUpRight className="w-4 h-4 text-black" />
@@ -316,9 +316,9 @@ export function PaimaHomeContent() {
       {/* ================= SERVICES SECTION ================= */}
       <section
         aria-label="Paima Offerings"
-        className="py-24 sm:py-32 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto"
+        className="py-16 sm:py-24 lg:py-32 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto"
       >
-        <div className="mb-16">
+        <div className="mb-12 sm:mb-16">
           <SlideFromLeft>
             <div className="flex items-center gap-3 mb-3">
               <span className="w-8 h-[2px] bg-black" />
@@ -326,7 +326,7 @@ export function PaimaHomeContent() {
                 DISCIPLINES &amp; ADVISORY
               </span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold text-black tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold text-black tracking-tight break-words">
               Core Offerings
             </h2>
             <p className="font-sans text-xs sm:text-sm text-black max-w-xl font-semibold leading-relaxed mt-3">
@@ -338,7 +338,7 @@ export function PaimaHomeContent() {
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {SERVICES.map((service, idx) => (
             <StaggerItem key={service.id}>
-              <div className="bg-[#BEB5A9]/50 p-7 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:border-black transition-all duration-400 h-full flex flex-col justify-between group">
+              <div className="bg-[#BEB5A9]/50 p-6 sm:p-7 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:border-black transition-all duration-400 h-full flex flex-col justify-between group">
                 <div>
                   <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#E1D4C2] mb-6 rounded-xl">
                     <Image
@@ -352,7 +352,7 @@ export function PaimaHomeContent() {
                   <span className="text-[9px] font-sans uppercase tracking-[0.2em] text-black font-extrabold block mb-2">
                     {service.tag}
                   </span>
-                  <h3 className="font-serif text-xl text-black font-extrabold mb-3">
+                  <h3 className="font-serif text-lg sm:text-xl text-black font-extrabold mb-3">
                     {service.title}
                   </h3>
                   <p className="font-sans text-xs text-black leading-relaxed font-semibold">
@@ -363,7 +363,7 @@ export function PaimaHomeContent() {
                 <div className="pt-6 mt-6 border-t border-[#A78D78]/50 flex items-center justify-between">
                   <Link
                     href="/services"
-                    className="text-xs uppercase tracking-[0.18em] font-extrabold text-black hover:text-[#A78D78] transition-colors flex items-center gap-1"
+                    className="text-xs uppercase tracking-[0.18em] font-extrabold text-black hover:text-[#A78D78] transition-colors flex items-center gap-1 min-h-[44px]"
                   >
                     <span>VIEW SCOPE</span>
                     <ArrowUpRight className="w-3.5 h-3.5 text-black" />
@@ -379,15 +379,15 @@ export function PaimaHomeContent() {
       {/* ================= TESTIMONIALS SECTION ================= */}
       <section
         aria-label="Client Perspectives"
-        className="py-24 sm:py-32 bg-[#BEB5A9]/40 border-t border-[#A78D78]/50 px-4 sm:px-8 lg:px-12"
+        className="py-16 sm:py-24 lg:py-32 bg-[#BEB5A9]/40 border-t border-[#A78D78]/50 px-4 sm:px-8 lg:px-12"
       >
         <div className="max-w-7xl mx-auto">
           <FadeUpBottom>
-            <div className="text-center max-w-xl mx-auto mb-16 space-y-3">
+            <div className="text-center max-w-xl mx-auto mb-12 sm:mb-16 space-y-3">
               <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.28em] text-black">
                 ENDORSEMENTS
               </span>
-              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-black tracking-tight">
+              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-black tracking-tight break-words">
                 Patron Perspectives
               </h2>
               <p className="font-sans text-xs sm:text-sm text-black font-semibold">
@@ -396,17 +396,17 @@ export function PaimaHomeContent() {
             </div>
           </FadeUpBottom>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {TESTIMONIALS.map((t, idx) => {
             if (!isClient || shouldReduceMotion) {
               return (
                 <div key={t.id} className="h-full">
-                  <blockquote className="h-full bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl flex flex-col justify-between">
+                  <blockquote className="h-full bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl flex flex-col justify-between">
                     <div>
-                      <span className="font-serif text-5xl text-black block mb-4 leading-none">
+                      <span className="font-serif text-4xl sm:text-5xl text-black block mb-3 sm:mb-4 leading-none">
                         &ldquo;
                       </span>
-                      <p className="font-serif text-base sm:text-lg text-black font-semibold leading-relaxed mb-6">
+                      <p className="font-serif text-sm sm:text-lg text-black font-semibold leading-relaxed mb-6">
                         {t.quote}
                       </p>
                     </div>
@@ -436,12 +436,12 @@ export function PaimaHomeContent() {
                 }}
                 className="h-full"
               >
-                <blockquote className="h-full bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl flex flex-col justify-between">
+                <blockquote className="h-full bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl flex flex-col justify-between">
                   <div>
-                    <span className="font-serif text-5xl text-black block mb-4 leading-none">
+                    <span className="font-serif text-4xl sm:text-5xl text-black block mb-3 sm:mb-4 leading-none">
                       &ldquo;
                     </span>
-                    <p className="font-serif text-base sm:text-lg text-black font-semibold leading-relaxed mb-6">
+                    <p className="font-serif text-sm sm:text-lg text-black font-semibold leading-relaxed mb-6">
                       {t.quote}
                     </p>
                   </div>
@@ -464,14 +464,14 @@ export function PaimaHomeContent() {
       {/* ================= PRIVATE CONSULTATION CTA ================= */}
       <section
         aria-label="Private Consultation"
-        className="py-24 sm:py-32 bg-[#BEB5A9] border-t border-[#A78D78]/50 text-black relative overflow-hidden"
+        className="py-16 sm:py-24 lg:py-32 bg-[#BEB5A9] border-t border-[#A78D78]/50 text-black relative overflow-hidden"
       >
-        <div className="max-w-4xl mx-auto px-4 sm:px-8 text-center space-y-8 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 text-center space-y-6 sm:space-y-8 relative z-10">
           <FadeUpBottom>
             <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.3em] text-black">
               PRIVATE CLIENT CONCIERGE
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black mt-4">
+            <h2 className="font-serif text-2xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black mt-3 sm:mt-4 break-words">
               Begin Your Architectural Acquisition
             </h2>
           </FadeUpBottom>
@@ -480,10 +480,10 @@ export function PaimaHomeContent() {
             <p className="font-sans text-xs sm:text-sm text-black max-w-xl mx-auto font-bold leading-relaxed">
               Whether you wish to acquire an unlisted waterfront estate or commission a turnkey architectural interior transformation, our partners are at your service.
             </p>
-            <div className="flex flex-wrap justify-center items-center gap-4 pt-8">
+            <div className="flex flex-wrap justify-center items-center gap-4 pt-6 sm:pt-8">
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#E1D4C2] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.2em] font-extrabold transition-all duration-300 shadow-xl border border-black"
+                className="inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-full bg-[#E1D4C2] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.2em] font-extrabold transition-all duration-300 shadow-xl border border-black w-full sm:w-auto min-h-[48px]"
               >
                 <span>PRIVATE INQUIRIES</span>
                 <ArrowUpRight className="w-4 h-4 text-black" />

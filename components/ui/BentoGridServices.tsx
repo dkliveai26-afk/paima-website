@@ -16,7 +16,7 @@ export function BentoGridServices() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 text-black">
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 text-black">
       {SERVICES.map((service: Service, idx: number) => {
         const isExpanded = expandedId === service.id;
 
@@ -30,7 +30,7 @@ export function BentoGridServices() {
               )}
             >
               {/* Background Image */}
-              <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-[#E1D4C2]">
+              <div className="relative h-52 sm:h-72 w-full overflow-hidden bg-[#E1D4C2]">
                 <Image
                   src={service.image}
                   alt={`${service.title} - Paima Haute Services`}
@@ -46,17 +46,17 @@ export function BentoGridServices() {
                   </span>
                 </div>
 
-                <div className="absolute bottom-4 left-6 right-6 z-10">
-                  <h3 className="font-serif text-2xl sm:text-3xl text-black font-extrabold tracking-tight">
+                <div className="absolute bottom-4 left-5 sm:left-6 right-5 sm:right-6 z-10">
+                  <h3 className="font-serif text-xl sm:text-3xl text-black font-extrabold tracking-tight">
                     {service.title}
                   </h3>
                 </div>
               </div>
 
               {/* Content Area */}
-              <div className="p-6 sm:p-8 flex flex-col justify-between flex-1">
+              <div className="p-5 sm:p-8 flex flex-col justify-between flex-1">
                 <div>
-                  <p className="font-sans text-xs sm:text-sm text-black leading-relaxed font-bold mb-6">
+                  <p className="font-sans text-xs sm:text-sm text-black leading-relaxed font-bold mb-5 sm:mb-6">
                     {service.shortDescription}
                   </p>
 
@@ -92,7 +92,7 @@ export function BentoGridServices() {
                   <button
                     type="button"
                     onClick={() => toggleExpand(service.id)}
-                    className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.18em] text-black hover:text-[#A78D78] font-extrabold transition-colors duration-300 focus:outline-none"
+                    className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.18em] text-black hover:text-[#A78D78] font-extrabold transition-colors duration-300 focus:outline-none min-h-[44px]"
                     aria-expanded={isExpanded}
                   >
                     <span>{isExpanded ? "Collapse Scope" : "Expand Scope & Process"}</span>

@@ -32,12 +32,12 @@ export const metadata: Metadata = constructMetadata({
 
 export default function AboutPage() {
   return (
-    <article className="pt-36 pb-24 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto text-black bg-[#E1D4C2]">
+    <article className="pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto text-black bg-[#E1D4C2]">
       {/* MANIFESTO HEADER - APP-STYLE GROUPED CARD */}
-      <section aria-label="Manifesto Header" className="mb-20 lg:mb-28">
+      <section aria-label="Manifesto Header" className="mb-14 sm:mb-20 lg:mb-28">
         <SlideFromLeft>
-          <div className="bg-[#BEB5A9]/50 border border-[#A78D78]/60 p-8 sm:p-12 lg:p-14 rounded-3xl shadow-xl space-y-8 backdrop-blur-sm">
-            <div className="space-y-4">
+          <div className="bg-[#BEB5A9]/50 border border-[#A78D78]/60 p-6 sm:p-12 lg:p-14 rounded-2xl sm:rounded-3xl shadow-xl space-y-6 sm:space-y-8 backdrop-blur-sm">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center gap-3">
                 <span className="w-8 h-[2px] bg-black" />
                 <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold">
@@ -45,20 +45,20 @@ export default function AboutPage() {
                 </span>
               </div>
 
-              <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-black tracking-tight leading-[1.1] max-w-5xl">
+              <h1 className="font-serif text-3xl sm:text-6xl lg:text-7xl font-bold text-black tracking-tight leading-[1.1] max-w-5xl break-words">
                 The Synthesis of Architecture, <br />
                 <span className="italic text-black">Silence, and Matter.</span>
               </h1>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-8 border-t border-[#A78D78]/50 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 pt-6 sm:pt-8 border-t border-[#A78D78]/50 items-start">
               <div className="lg:col-span-4">
                 <span className="px-3 py-1 bg-[#E1D4C2] border border-black text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold rounded-sm shadow-sm inline-block">
                   FOUNDATIONAL DOGMA
                 </span>
               </div>
               <div className="lg:col-span-8">
-                <p className="font-serif text-xl sm:text-2xl text-black font-bold leading-relaxed">
+                <p className="font-serif text-lg sm:text-2xl text-black font-bold leading-relaxed">
                   We believe interior architecture should not shout. In an age of sensory overload, true luxury is the quiet dignity of uncluttered space, where natural shadows move across textured stone, and every breath feels unhurried.
                 </p>
               </div>
@@ -70,7 +70,7 @@ export default function AboutPage() {
       {/* =========================================================================
           EDITORIAL PILLARS & CARDS SYSTEM (6 REFINED ARCHITECTURAL BLOCKS)
           ========================================================================= */}
-      <section aria-label="Paima Editorial Cards System" className="mb-28 lg:mb-40">
+      <section aria-label="Paima Editorial Cards System" className="mb-16 sm:mb-28 lg:mb-40">
         <SectionHeading
           eyebrow="PILLARS OF ARCHITECTURAL EXECUTION"
           title="Curated Design Discipline"
@@ -78,7 +78,7 @@ export default function AboutPage() {
           align="left"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 mt-8 sm:mt-12">
           {/* 1. STUDIO PHILOSOPHY (HERO WIDE CARD - SPAN 7) */}
           <SlideFromLeft delay={0.1} className="md:col-span-7">
             <div className="group relative bg-[#BEB5A9]/70 border border-[#A78D78]/60 rounded-2xl overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full">
@@ -97,14 +97,14 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              <div className="p-8 space-y-4">
-                <h3 className="font-serif text-2xl sm:text-3xl text-black font-extrabold tracking-tight">
+              <div className="p-6 sm:p-8 space-y-4">
+                <h3 className="font-serif text-xl sm:text-3xl text-black font-extrabold tracking-tight">
                   Subtractive Architecture &amp; Spatial Restraint
                 </h3>
                 <p className="font-sans text-xs sm:text-sm text-black font-bold leading-relaxed">
                   Rather than decorating surface area, we carve away excess. By prioritizing spatial volume, clean geometries, and honest materiality, our interiors cultivate deep emotional tranquility.
                 </p>
-                <div className="pt-2 border-t border-[#A78D78]/40 flex items-center justify-between text-xs text-black font-mono font-extrabold">
+                <div className="pt-2 border-t border-[#A78D78]/40 flex items-center justify-between text-[11px] sm:text-xs text-black font-mono font-extrabold">
                   <span>MILAN &bull; PARIS &bull; MONACO &bull; NY</span>
                   <Compass className="w-4 h-4 text-black" />
                 </div>
@@ -130,14 +130,14 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              <div className="p-8 space-y-3">
-                <h3 className="font-serif text-2xl text-black font-extrabold tracking-tight">
+              <div className="p-6 sm:p-8 space-y-3">
+                <h3 className="font-serif text-xl sm:text-2xl text-black font-extrabold tracking-tight">
                   Proportion &amp; Light Modulation
                 </h3>
                 <p className="font-sans text-xs text-black font-bold leading-relaxed">
                   Light is our primary medium. We align sightlines to capture golden morning rays and dusk gradients across brushed limestone walls.
                 </p>
-                <div className="pt-2 border-t border-[#A78D78]/40 flex items-center justify-between text-xs text-black font-mono font-extrabold">
+                <div className="pt-2 border-t border-[#A78D78]/40 flex items-center justify-between text-[11px] sm:text-xs text-black font-mono font-extrabold">
                   <span>NATURAL ILLUMINATION</span>
                   <Sparkles className="w-4 h-4 text-black" />
                 </div>
@@ -147,7 +147,7 @@ export default function AboutPage() {
 
           {/* 3. CRAFTSMANSHIP (CARD - SPAN 4) */}
           <SlowCardReveal delay={0.1} className="md:col-span-4">
-            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
+            <div className="group relative bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold">
@@ -155,7 +155,7 @@ export default function AboutPage() {
                   </span>
                   <Hammer className="w-4 h-4 text-black" />
                 </div>
-                <h3 className="font-serif text-xl sm:text-2xl text-black font-extrabold">
+                <h3 className="font-serif text-lg sm:text-2xl text-black font-extrabold">
                   Master Stonemasonry &amp; Joinery
                 </h3>
                 <p className="font-sans text-xs text-black font-bold leading-relaxed">
@@ -170,7 +170,7 @@ export default function AboutPage() {
 
           {/* 4. MATERIAL INTELLIGENCE (CARD - SPAN 4) */}
           <SlowCardReveal delay={0.24} className="md:col-span-4">
-            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
+            <div className="group relative bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold">
@@ -178,7 +178,7 @@ export default function AboutPage() {
                   </span>
                   <Layers className="w-4 h-4 text-black" />
                 </div>
-                <h3 className="font-serif text-xl sm:text-2xl text-black font-extrabold">
+                <h3 className="font-serif text-lg sm:text-2xl text-black font-extrabold">
                   Organic Textures &amp; Tactility
                 </h3>
                 <p className="font-sans text-xs text-black font-bold leading-relaxed">
@@ -193,7 +193,7 @@ export default function AboutPage() {
 
           {/* 5. SPATIAL EXPERIENCE (CARD - SPAN 4) */}
           <SlowCardReveal delay={0.38} className="md:col-span-4">
-            <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
+            <div className="group relative bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold">
@@ -201,7 +201,7 @@ export default function AboutPage() {
                   </span>
                   <VolumeX className="w-4 h-4 text-black" />
                 </div>
-                <h3 className="font-serif text-xl sm:text-2xl text-black font-extrabold">
+                <h3 className="font-serif text-lg sm:text-2xl text-black font-extrabold">
                   Acoustic Serenity &amp; Flow
                 </h3>
                 <p className="font-sans text-xs text-black font-bold leading-relaxed">
@@ -216,25 +216,25 @@ export default function AboutPage() {
 
           {/* 6. ATTENTION TO DETAIL (HERO BOTTOM CARD - SPAN 12) */}
           <SlowCardReveal delay={0.2} className="md:col-span-12">
-            <div className="group relative bg-[#BEB5A9] border border-[#A78D78] p-8 sm:p-12 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="group relative bg-[#BEB5A9] border border-[#A78D78] p-6 sm:p-12 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-7 space-y-4">
                 <span className="px-3.5 py-1.5 bg-[#E1D4C2] text-black text-[9px] font-sans uppercase tracking-[0.25em] font-extrabold border border-black rounded-sm shadow-sm inline-block">
                   06 &bull; ATTENTION TO DETAIL
                 </span>
-                <h3 className="font-serif text-3xl sm:text-4xl text-black font-extrabold tracking-tight">
+                <h3 className="font-serif text-2xl sm:text-4xl text-black font-extrabold tracking-tight">
                   Millimeter Precision &amp; Invisible Architecture
                 </h3>
                 <p className="font-sans text-xs sm:text-sm text-black font-bold leading-relaxed">
                   True elegance resides in what is unseen: shadowline baseboards, flush frameless door reveals, floor-recessed curtain tracks, and concealed HVAC diffusers integrated into stone joints.
                 </p>
-                <div className="pt-4 flex flex-wrap gap-3">
-                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
+                <div className="pt-2 sm:pt-4 flex flex-wrap gap-2 sm:gap-3">
+                  <span className="px-2.5 sm:px-3 py-1 bg-[#E1D4C2] text-black text-[9px] sm:text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
                     Flush Door Reveals
                   </span>
-                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
+                  <span className="px-2.5 sm:px-3 py-1 bg-[#E1D4C2] text-black text-[9px] sm:text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
                     Shadowline Skirting
                   </span>
-                  <span className="px-3 py-1 bg-[#E1D4C2] text-black text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
+                  <span className="px-2.5 sm:px-3 py-1 bg-[#E1D4C2] text-black text-[9px] sm:text-[10px] font-sans uppercase tracking-wider font-extrabold border border-black">
                     Concealed Linear Diffusers
                   </span>
                 </div>
@@ -255,7 +255,7 @@ export default function AboutPage() {
       </section>
 
       {/* TIMELINE SECTION */}
-      <section aria-label="Chronological Timeline" className="mb-28 lg:mb-40">
+      <section aria-label="Chronological Timeline" className="mb-16 sm:mb-28 lg:mb-40">
         <SectionHeading
           eyebrow="MILESTONES &amp; LEGACY"
           title="A Decade of Architectural Evolution"
@@ -263,10 +263,10 @@ export default function AboutPage() {
           align="center"
         />
 
-        <div className="relative max-w-4xl mx-auto mt-16">
+        <div className="relative max-w-4xl mx-auto mt-10 sm:mt-16">
           <div className="hidden md:block absolute top-0 bottom-0 left-1/2 w-[1px] bg-[#A78D78]/50 -translate-x-1/2" />
 
-          <div className="space-y-12 sm:space-y-16">
+          <div className="space-y-6 sm:space-y-16">
             {TIMELINE.map((item, idx) => {
               const isEven = idx % 2 === 0;
               return (
@@ -276,16 +276,16 @@ export default function AboutPage() {
                       isEven ? "md:flex-row-reverse" : ""
                     }`}
                   >
-                    <div className="w-full md:w-[45%] bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:border-black transition-all duration-400 hover:-translate-y-1">
+                    <div className="w-full md:w-[45%] bg-[#BEB5A9]/60 p-6 sm:p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:border-black transition-all duration-400 hover:-translate-y-1">
                       <div className="flex items-center justify-between gap-4 mb-3">
-                        <span className="font-serif text-2xl font-black text-black">
+                        <span className="font-serif text-xl sm:text-2xl font-black text-black">
                           {item.year}
                         </span>
                         <span className="px-2.5 py-0.5 bg-[#E1D4C2] border border-black text-[9px] font-sans uppercase tracking-widest text-black font-extrabold rounded-sm">
                           {item.milestone}
                         </span>
                       </div>
-                      <h3 className="font-serif text-lg text-black mb-2 font-black">
+                      <h3 className="font-serif text-base sm:text-lg text-black mb-2 font-black">
                         {item.title}
                       </h3>
                       <p className="font-sans text-xs text-black leading-relaxed font-semibold">
@@ -305,22 +305,22 @@ export default function AboutPage() {
       </section>
 
       {/* CLOSING CTA */}
-      <section className="pt-12 text-center">
+      <section className="pt-6 sm:pt-12 text-center">
         <TextSlideFromTop>
-          <div className="p-12 sm:p-16 bg-[#BEB5A9] text-black border border-[#A78D78] max-w-3xl mx-auto space-y-6 rounded-2xl shadow-2xl">
+          <div className="p-8 sm:p-16 bg-[#BEB5A9] text-black border border-[#A78D78] max-w-3xl mx-auto space-y-6 rounded-2xl shadow-2xl">
             <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold">
               NEXT STEP
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl text-black font-extrabold">
+            <h2 className="font-serif text-2xl sm:text-4xl text-black font-extrabold break-words">
               Collaborate on Your Next Spatial Masterpiece
             </h2>
             <p className="font-sans text-xs sm:text-sm text-black max-w-md mx-auto font-bold leading-relaxed">
               We look forward to understanding your aspirations, lifestyle, and architectural preferences.
             </p>
-            <div className="pt-4">
+            <div className="pt-2 sm:pt-4">
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#E1D4C2] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.2em] font-extrabold transition-all duration-300 shadow-xl border border-black"
+                className="inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-full bg-[#E1D4C2] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.2em] font-extrabold transition-all duration-300 shadow-xl border border-black w-full sm:w-auto min-h-[48px]"
               >
                 <span>SCHEDULE PRIVATE CONSULTATION &rarr;</span>
               </Link>

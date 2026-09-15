@@ -19,13 +19,18 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   body {
     background-color: #E1D4C2;
     color: #000000;
     overflow-x: hidden;
+    max-width: 100vw;
     min-height: 100vh;
+    min-height: 100dvh;
   }
 
   ::selection {

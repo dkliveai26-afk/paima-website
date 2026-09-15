@@ -18,7 +18,7 @@ export default function PublicLayout({
         Skip to primary content
       </a>
       <Navbar />
-      <main id="main-content" className="relative min-h-screen w-full overflow-x-clip">
+      <main id="main-content" className="relative min-h-screen w-full max-w-full overflow-x-clip">
         {children}
       </main>
       <Footer />

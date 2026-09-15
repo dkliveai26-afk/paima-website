@@ -171,7 +171,7 @@ export function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-[#BEB5A9]/50 p-8 sm:p-12 border border-[#A78D78]/50 shadow-2xl space-y-8 rounded-2xl text-black"
+      className="bg-[#BEB5A9]/50 p-5 sm:p-12 border border-[#A78D78]/50 shadow-2xl space-y-6 sm:space-y-8 rounded-2xl text-black"
     >
       <div className="border-b border-[#A78D78]/50 pb-4">
         <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold">
@@ -200,13 +200,13 @@ export function ContactForm() {
           required
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black placeholder:text-black/60 focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold"
+          className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black placeholder:text-black/60 focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold min-h-[44px]"
           placeholder="e.g. Eleanor Vance"
         />
       </div>
 
       {/* Email & Phone */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <div className="space-y-2">
           <label htmlFor="contact-email" className="text-[10px] uppercase font-sans tracking-[0.18em] text-black font-extrabold block">
             Email Address *
@@ -217,7 +217,7 @@ export function ContactForm() {
             required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black placeholder:text-black/60 focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold"
+            className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black placeholder:text-black/60 focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold min-h-[44px]"
             placeholder="patron@domain.com"
           />
         </div>
@@ -231,7 +231,7 @@ export function ContactForm() {
             id="contact-phone"
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black placeholder:text-black/60 focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold"
+            className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black placeholder:text-black/60 focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold min-h-[44px]"
             placeholder="+1 (555) 000-0000"
           />
         </div>
@@ -248,7 +248,7 @@ export function ContactForm() {
           id="contact-date"
           value={formData.preferredDate}
           onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-          className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold"
+          className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black focus:outline-none focus:border-black transition-all duration-300 rounded-lg font-bold min-h-[44px]"
         />
       </div>
 
@@ -260,7 +260,7 @@ export function ContactForm() {
         <select
           value={formData.projectType}
           onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-          className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black focus:outline-none focus:border-black transition-all duration-300 cursor-pointer rounded-lg font-bold"
+          className="w-full bg-[#E1D4C2] border border-[#A78D78] px-4 py-3 text-xs text-black focus:outline-none focus:border-black transition-all duration-300 cursor-pointer rounded-lg font-bold min-h-[44px]"
         >
           {projectTypes.map((type) => (
             <option key={type} value={type} className="bg-[#E1D4C2] text-black font-bold">
@@ -282,7 +282,7 @@ export function ContactForm() {
               key={b}
               onClick={() => setFormData({ ...formData, budget: b })}
               className={cn(
-                "px-3 py-2.5 text-[11px] font-sans transition-all duration-300 text-left border rounded-lg focus:outline-none",
+                "px-3 py-2.5 text-[11px] font-sans transition-all duration-300 text-left border rounded-lg focus:outline-none min-h-[44px] flex items-center",
                 formData.budget === b
                   ? "bg-[#A78D78] text-black border-black font-extrabold shadow-md"
                   : "bg-[#E1D4C2] text-black border-[#A78D78]/50 hover:border-black font-bold"
@@ -327,7 +327,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full py-4 px-8 bg-[#A78D78] text-black hover:bg-[#BEB5A9] text-xs uppercase tracking-[0.2em] font-extrabold transition-all duration-300 flex items-center justify-center gap-3 rounded-full shadow-xl group focus:outline-none border border-black disabled:opacity-50"
+        className="w-full py-3.5 sm:py-4 px-8 bg-[#A78D78] text-black hover:bg-[#BEB5A9] text-xs uppercase tracking-[0.2em] font-extrabold transition-all duration-300 flex items-center justify-center gap-3 rounded-full shadow-xl group focus:outline-none border border-black disabled:opacity-50 min-h-[48px]"
       >
         {submitting ? (
           <span>Transmitting Confidential Brief...</span>

@@ -45,43 +45,43 @@ export default function ContactPage() {
   const faqSchema = generateFAQSchema(PAIMA_FAQS);
 
   return (
-    <div className="pt-36 pb-24 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto text-black bg-[#E1D4C2]">
+    <div className="pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto text-black bg-[#E1D4C2]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
         {/* Left Column */}
-        <div className="lg:col-span-5 space-y-10">
+        <div className="lg:col-span-5 space-y-6 sm:space-y-10">
           <SlideFromLeft>
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-3 sm:mb-4">
               <span className="w-8 h-[2px] bg-black" />
               <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold">
                 CLIENT CONCIERGE
               </span>
             </div>
 
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-black tracking-tight leading-[1.1]">
+            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-black tracking-tight leading-[1.1] break-words">
               Begin A <br />
               <span className="italic text-black">Private Dialogue.</span>
             </h1>
 
-            <p className="mt-6 font-sans text-sm text-black font-semibold leading-relaxed">
+            <p className="mt-4 sm:mt-6 font-sans text-xs sm:text-sm text-black font-semibold leading-relaxed">
               Every commission begins with an open conversation regarding spatial ambition, materiality, and emotional resonance. We welcome private residential inquiries in Kolkata, India, and worldwide.
             </p>
           </SlideFromLeft>
 
           <SlideFromLeft delay={0.15}>
-            <div className="space-y-6 pt-6 border-t border-[#A78D78]/50">
+            <div className="space-y-5 sm:space-y-6 pt-5 sm:pt-6 border-t border-[#A78D78]/50">
               <div className="space-y-1">
                 <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-black font-extrabold">
                   Direct Inquiries
                 </span>
-                <p className="font-serif text-xl sm:text-2xl text-black font-black">
+                <p className="font-serif text-lg sm:text-2xl text-black font-black">
                   <a
                     href={`mailto:${AGENCY_INFO.email}`}
-                    className="hover:text-[#A78D78] transition-colors duration-300"
+                    className="hover:text-[#A78D78] transition-colors duration-300 break-all"
                   >
                     {AGENCY_INFO.email}
                   </a>
@@ -112,23 +112,23 @@ export default function ContactPage() {
       </div>
 
       {/* FREQUENTLY ASKED QUESTIONS */}
-      <section aria-label="Frequently Asked Questions" className="mt-28 pt-16 border-t border-[#A78D78]/50">
+      <section aria-label="Frequently Asked Questions" className="mt-16 sm:mt-28 pt-10 sm:pt-16 border-t border-[#A78D78]/50">
         <FadeUpBottom>
-          <div className="mb-12">
+          <div className="mb-8 sm:mb-12">
             <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-black font-extrabold block mb-2">
               HELPFUL INFORMATION
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-black tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-black tracking-tight break-words">
               Frequently Asked Questions
             </h2>
           </div>
         </FadeUpBottom>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {PAIMA_FAQS.map((faq, idx) => (
             <SlowCardReveal key={idx} delay={0.14 * idx}>
-              <div className="bg-[#BEB5A9]/50 p-6 sm:p-8 rounded-2xl border border-[#A78D78]/50 space-y-3 shadow-lg">
-                <h3 className="font-serif text-lg text-black font-extrabold">
+              <div className="bg-[#BEB5A9]/50 p-5 sm:p-8 rounded-2xl border border-[#A78D78]/50 space-y-2.5 sm:space-y-3 shadow-lg">
+                <h3 className="font-serif text-base sm:text-lg text-black font-extrabold">
                   {faq.question}
                 </h3>
                 <p className="font-sans text-xs sm:text-sm text-black/80 font-bold leading-relaxed">

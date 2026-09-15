@@ -149,7 +149,7 @@ export function LuxuryMinimalistHero() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-label="Paima Luxury Architectural Hero - Crafted for Living"
-      className="relative w-full h-[100svh] min-h-[700px] max-h-[1100px] overflow-hidden select-none bg-[#E1D4C2] flex flex-col justify-end"
+      className="relative w-full h-[100svh] min-h-[560px] sm:min-h-[700px] max-h-[1100px] overflow-hidden select-none bg-[#E1D4C2] flex flex-col justify-end"
     >
       {/* =========================================================================
           LAYER 1: BACKGROUND ROOM ARCHITECTURE (z-0)
@@ -236,18 +236,18 @@ export function LuxuryMinimalistHero() {
       {/* =========================================================================
           HERO UI: CLEAN CINEMATIC FLOATING EXPLORE CTA (z-30)
           - All text removed so architectural image is the primary focal point
-          - "EXPLORE" CTA button cleanly placed at bottom-right
+          - "EXPLORE" CTA button cleanly placed at bottom-right on desktop, centered on mobile
           ========================================================================= */}
       <motion.div
         variants={bottomContentVariants}
         initial="initial"
         animate="animate"
-        className="relative z-30 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-12 sm:pb-16 pt-8 flex justify-end pointer-events-auto"
+        className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pb-8 sm:pb-16 pt-8 flex justify-center sm:justify-end pointer-events-auto"
       >
         <Link
           href="/portfolio"
           id="hero-explore-cta"
-          className="group inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black font-sans text-xs sm:text-sm font-extrabold tracking-[0.2em] uppercase shadow-2xl transition-all duration-300 hover:scale-105 shrink-0 focus:outline-none border border-black"
+          className="group inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black font-sans text-xs sm:text-sm font-extrabold tracking-[0.2em] uppercase shadow-2xl transition-all duration-300 hover:scale-105 shrink-0 focus:outline-none border border-black min-h-[48px] w-full max-w-[280px] sm:w-auto"
         >
           <span>EXPLORE</span>
           <ArrowUpRight className="w-4 h-4 text-black transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

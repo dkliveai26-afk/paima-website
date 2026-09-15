@@ -45,6 +45,17 @@ export function Navbar() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  // Lock body scroll when mobile menu is open to prevent background scrolling
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [mobileMenuOpen]);
+
   return (
     <>
       <header
@@ -52,12 +63,12 @@ export function Navbar() {
           "fixed top-0 inset-x-0 z-[100] transition-all duration-500",
           isScrolled
             ? "py-3 bg-[#E1D4C2]/95 backdrop-blur-xl border-b border-[#A78D78]/40 shadow-md"
-            : "py-5 bg-gradient-to-b from-[#E1D4C2]/95 via-[#E1D4C2]/50 to-transparent"
+            : "py-3.5 sm:py-5 bg-gradient-to-b from-[#E1D4C2]/95 via-[#E1D4C2]/50 to-transparent"
         )}
       >
         <nav
           aria-label="Global Persistent Navigation Bar"
-          className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-between"
+          className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between"
         >
           {/* ================= LEFT NODE: BRAND LOGO (DROP FROM TOP) ================= */}
           <motion.div
@@ -77,7 +88,7 @@ export function Navbar() {
                 width={180}
                 height={48}
                 priority
-                className="h-10 sm:h-12 w-auto object-contain"
+                className="h-9 sm:h-12 w-auto object-contain"
               />
             </Link>
           </motion.div>
@@ -183,58 +194,95 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-black hover:opacity-80 focus:outline-none"
+              className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full p-2 text-black bg-[#BEB5A9]/40 border border-[#A78D78]/50 hover:bg-[#BEB5A9] active:scale-95 transition-all focus:outline-none"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </motion.div>
         </nav>
       </header>
 
-      {/* ================= MOBILE DRAWER ================= */}
+      {/* ================= MOBILE FULLSCREEN APP-STYLE DRAWER ================= */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -16 }}
             transition={springTransition}
-            className="fixed inset-0 z-[90] bg-[#E1D4C2]/98 backdrop-blur-2xl flex flex-col justify-between p-8 pt-28 md:hidden text-black overflow-y-auto"
+            className="fixed inset-0 z-[120] bg-[#E1D4C2]/98 backdrop-blur-2xl flex flex-col justify-between p-5 sm:p-8 pt-6 md:hidden text-black overflow-y-auto"
           >
-            <div className="flex flex-col space-y-6">
-              <span className="text-[10px] font-sans tracking-[0.3em] uppercase text-black font-extrabold">
-                NAVIGATION
-              </span>
-              {NAV_LINKS.map((link, idx) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 * idx, ...springTransition }}
-                >
-                  <Link
-                    href={link.href}
-                    className={cn(
-                      "font-serif text-2xl sm:text-3xl tracking-wide block transition-colors duration-300",
-                      pathname === link.href
-                        ? "text-black font-extrabold"
-                        : "text-black/80 hover:text-black"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
+            {/* Top Bar with Brand and Close */}
+            <div className="flex items-center justify-between pb-4 border-b border-[#A78D78]/40 shrink-0">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center"
+              >
+                <Image
+                  src="/logo.svg"
+                  alt="Paima"
+                  width={140}
+                  height={36}
+                  className="h-8 w-auto object-contain"
+                />
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-[#BEB5A9]/60 border border-black p-2 text-black active:scale-95 transition-all focus:outline-none"
+                aria-label="Close menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="pt-8 border-t border-[#A78D78]/40 space-y-4">
+            {/* Navigation Links */}
+            <div className="flex flex-col space-y-2 py-6">
+              <span className="text-[10px] font-sans tracking-[0.3em] uppercase text-black/70 font-extrabold px-3 mb-2">
+                STUDIO DIRECTORY
+              </span>
+              {NAV_LINKS.map((link, idx) => {
+                const isActive = pathname === link.href;
+                return (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.04 * idx, ...springTransition }}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={cn(
+                        "flex items-center justify-between px-3.5 py-3.5 rounded-xl text-lg sm:text-2xl font-serif tracking-wide transition-all duration-300 min-h-[48px]",
+                        isActive
+                          ? "bg-[#BEB5A9] text-black font-extrabold border border-black shadow-sm"
+                          : "text-black/90 hover:bg-[#BEB5A9]/50 hover:text-black"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-mono font-extrabold text-black/60">
+                          0{idx + 1}
+                        </span>
+                        <span>{link.label}</span>
+                      </div>
+                      <ArrowUpRight className="w-4 h-4 opacity-70" />
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Bottom Auth & Concierge Actions */}
+            <div className="pt-6 border-t border-[#A78D78]/40 space-y-3.5 shrink-0 pb-[calc(env(safe-area-inset-bottom,0px)+1rem)]">
               <Show when="signed-out">
-                <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-2 gap-2.5">
                   <SignInButton mode="modal">
                     <button
                       type="button"
-                      className="w-full py-3.5 bg-[#BEB5A9] text-black text-center text-xs uppercase tracking-[0.2em] font-extrabold rounded-full border border-black"
+                      className="w-full py-3 bg-[#BEB5A9] text-black text-center text-xs uppercase tracking-[0.16em] font-extrabold rounded-full border border-black min-h-[44px]"
                     >
                       SIGN IN
                     </button>
@@ -243,20 +291,20 @@ export function Navbar() {
                   <SignUpButton mode="modal">
                     <button
                       type="button"
-                      className="w-full py-3.5 bg-[#A78D78] text-black text-center text-xs uppercase tracking-[0.2em] font-extrabold rounded-full shadow-lg border border-black"
+                      className="w-full py-3 bg-[#A78D78] text-black text-center text-xs uppercase tracking-[0.16em] font-extrabold rounded-full shadow-md border border-black min-h-[44px]"
                     >
-                      CREATE ACCOUNT
+                      REGISTER
                     </button>
                   </SignUpButton>
                 </div>
               </Show>
 
               <Show when="signed-in">
-                <div className="flex items-center gap-3 p-3 bg-[#BEB5A9]/50 border border-[#A78D78] rounded-xl">
+                <div className="flex items-center gap-3 p-3 bg-[#BEB5A9]/60 border border-[#A78D78] rounded-xl">
                   <UserButton
                     appearance={{
                       elements: {
-                        avatarBox: "w-10 h-10 border border-black rounded-full shadow-md",
+                        avatarBox: "w-9 h-9 border border-black rounded-full shadow-md",
                       },
                     }}
                   />
@@ -266,14 +314,10 @@ export function Navbar() {
                 </div>
               </Show>
 
-              <p className="text-xs text-black font-semibold leading-relaxed pt-2">
-                Manhattan &bull; Monaco &bull; Paris &bull; Los Angeles
-                <br />
-                concierge@paimadesign.com
-              </p>
               <Link
                 href="/contact"
-                className="w-full py-3.5 bg-[#A78D78] text-black text-center text-xs uppercase tracking-[0.2em] font-extrabold flex items-center justify-center gap-2 rounded-full shadow-lg border border-black"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full py-3.5 bg-[#A78D78] text-black text-center text-xs uppercase tracking-[0.2em] font-extrabold flex items-center justify-center gap-2 rounded-full shadow-lg border border-black min-h-[48px]"
               >
                 <span>PRIVATE INQUIRIES</span>
                 <ArrowUpRight className="w-4 h-4 text-black" />

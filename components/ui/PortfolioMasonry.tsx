@@ -22,7 +22,7 @@ export function PortfolioMasonry() {
   return (
     <div className="bg-[#E1D4C2] text-black">
       {/* ================= CATEGORY FILTERS BAR ================= */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-8 mb-12 border-b border-[#A78D78]/50">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-6 sm:pb-8 mb-8 sm:mb-12 border-b border-[#A78D78]/50">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat;
@@ -32,7 +32,7 @@ export function PortfolioMasonry() {
                 type="button"
                 onClick={() => setActiveCategory(cat)}
                 className={cn(
-                  "relative px-5 py-2.5 text-[11px] font-sans uppercase tracking-[0.18em] transition-all duration-300 rounded-full border focus:outline-none",
+                  "relative px-4 sm:px-5 py-2 sm:py-2.5 text-[11px] font-sans uppercase tracking-[0.18em] transition-all duration-300 rounded-full border focus:outline-none min-h-[44px] flex items-center",
                   isActive
                     ? "bg-[#A78D78] text-black border-black font-extrabold shadow-md"
                     : "bg-[#BEB5A9]/60 text-black border-[#A78D78]/50 hover:border-black hover:bg-[#BEB5A9] font-bold"
@@ -53,7 +53,7 @@ export function PortfolioMasonry() {
       </div>
 
       {/* ================= MASONRY GRID WITH 3D REVEAL ================= */}
-      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         <AnimatePresence>
           {filteredProjects.map((project, idx) => {
             const aspectPattern =
@@ -119,7 +119,7 @@ export function PortfolioMasonry() {
                   </div>
 
                   {/* Card Footer */}
-                  <div className="p-5 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between transition-colors duration-300 group-hover:bg-[#BEB5A9]">
+                  <div className="p-4 sm:p-5 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between transition-colors duration-300 group-hover:bg-[#BEB5A9]">
                     <div>
                       <h4 className="font-serif text-base text-black font-extrabold group-hover:text-black transition-colors duration-300">
                         {project.title}
@@ -144,7 +144,7 @@ export function PortfolioMasonry() {
       <AnimatePresence>
         {selectedProject && (
           <div
-            className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 lg:p-12"
+            className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-xl flex items-center justify-center p-3 sm:p-6 lg:p-12"
             onClick={() => setSelectedProject(null)}
           >
             <motion.div
@@ -152,7 +152,7 @@ export function PortfolioMasonry() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-[#E1D4C2] border border-[#A78D78] max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative rounded-2xl text-black"
+              className="bg-[#E1D4C2] border border-[#A78D78] max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative rounded-2xl text-black"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative aspect-[16/9] w-full bg-[#E1D4C2]">
@@ -164,29 +164,29 @@ export function PortfolioMasonry() {
                 />
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="absolute top-4 right-4 bg-[#A78D78] hover:bg-[#BEB5A9] text-black px-4 py-2 text-xs uppercase tracking-[0.2em] font-extrabold transition-all duration-300 rounded-full shadow-lg border border-black"
+                  className="absolute top-4 right-4 bg-[#A78D78] hover:bg-[#BEB5A9] text-black px-4 py-2 text-xs uppercase tracking-[0.2em] font-extrabold transition-all duration-300 rounded-full shadow-lg border border-black min-h-[44px] flex items-center justify-center"
                 >
                   Close &times;
                 </button>
               </div>
 
-              <div className="p-8 sm:p-10 space-y-6">
+              <div className="p-5 sm:p-8 lg:p-10 space-y-6">
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#A78D78]/50 pb-6">
                   <div>
                     <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-black font-extrabold">
                       {selectedProject.category} &bull; {selectedProject.year}
                     </span>
-                    <h3 className="font-serif text-3xl sm:text-4xl text-black mt-1 font-bold">
+                    <h3 className="font-serif text-2xl sm:text-4xl text-black mt-1 font-bold">
                       {selectedProject.title}
                     </h3>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right">
                     <span className="text-xs font-mono text-black block font-bold">{selectedProject.location}</span>
                     <span className="text-sm font-serif text-black font-bold">{selectedProject.area}</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
                   <div className="md:col-span-2 space-y-4">
                     <h4 className="text-xs font-sans uppercase tracking-[0.18em] text-black font-extrabold">
                       Architectural Narrative
@@ -196,7 +196,7 @@ export function PortfolioMasonry() {
                     </p>
                   </div>
 
-                  <div className="space-y-4 bg-[#BEB5A9]/60 p-6 border border-[#A78D78]/50 rounded-xl">
+                  <div className="space-y-4 bg-[#BEB5A9]/60 p-5 sm:p-6 border border-[#A78D78]/50 rounded-xl">
                     <h4 className="text-xs font-sans uppercase tracking-[0.18em] text-black font-extrabold">
                       Material Specifications
                     </h4>
