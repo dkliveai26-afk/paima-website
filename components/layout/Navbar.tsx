@@ -35,8 +35,9 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
+      setIsScrolled(window.scrollY > 20);
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -63,7 +64,7 @@ export function Navbar() {
           "fixed top-0 inset-x-0 z-[100] transition-all duration-500",
           isScrolled
             ? "py-3 bg-[#E1D4C2]/95 backdrop-blur-xl border-b border-[#A78D78]/40 shadow-md"
-            : "py-3.5 sm:py-5 bg-gradient-to-b from-[#E1D4C2]/95 via-[#E1D4C2]/50 to-transparent"
+            : "py-3.5 sm:py-5 bg-transparent border-b border-transparent shadow-none"
         )}
       >
         <nav
