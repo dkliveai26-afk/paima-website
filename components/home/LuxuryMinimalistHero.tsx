@@ -149,100 +149,98 @@ export function LuxuryMinimalistHero() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-label="Paima Luxury Architectural Hero - Crafted for Living"
-      className="relative w-full h-[88svh] min-h-[520px] max-h-[750px] sm:h-[92svh] sm:min-h-[640px] lg:h-[100svh] lg:min-h-[700px] lg:max-h-[1100px] overflow-hidden select-none bg-[#E1D4C2] flex flex-col justify-end"
+      className="relative w-full overflow-hidden select-none bg-[#E1D4C2] pt-20 sm:pt-24 lg:pt-0 pb-6 sm:pb-10 lg:pb-0 lg:h-[100svh] lg:min-h-[700px] lg:max-h-[1100px] flex flex-col justify-between lg:justify-end"
     >
       {/* =========================================================================
-          LAYER 1: BACKGROUND ROOM ARCHITECTURE (z-0)
+          HERO ARCHITECTURAL STAGE (RESPONSIVE ON MOBILE/TABLET, FULLSCREEN ON DESKTOP)
           ========================================================================= */}
-      <motion.div
-        variants={backgroundVariants}
-        initial="initial"
-        animate="animate"
-        style={{ x: bgX, y: bgY }}
-        className="absolute inset-0 pointer-events-none z-0"
-      >
-        <Image
-          src="/images/hero/clean_kitchen_empty_bg.jpg"
-          alt="Paima Luxury Architectural Room Background"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[center_35%] sm:object-[center_40%] lg:object-center brightness-[0.96]"
-        />
-      </motion.div>
+      <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:absolute lg:inset-0 overflow-hidden">
+        {/* LAYER 1: BACKGROUND ROOM ARCHITECTURE (z-0) */}
+        <motion.div
+          variants={backgroundVariants}
+          initial="initial"
+          animate="animate"
+          style={{ x: bgX, y: bgY }}
+          className="absolute inset-0 pointer-events-none z-0"
+        >
+          <Image
+            src="/images/hero/clean_kitchen_empty_bg.jpg"
+            alt="Paima Luxury Architectural Room Background"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center brightness-[0.96]"
+          />
+        </motion.div>
 
-      {/* =========================================================================
-          LAYER 2: PERIPHERAL SIDE CABINETS & ARCHITECTURAL PANELS (z-10)
-          ========================================================================= */}
-      {/* LEFT PANEL */}
-      <motion.div
-        variants={leftPanelVariants}
-        initial="initial"
-        animate="animate"
-        style={{ x: leftPanelX, y: leftPanelY }}
-        className="absolute inset-0 pointer-events-none z-10"
-      >
-        <Image
-          src="/images/hero/clean_layer_left_panel.png"
-          alt="Paima Left Architectural Window Panel"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[center_35%] sm:object-[center_40%] lg:object-center brightness-[0.96]"
-        />
-      </motion.div>
+        {/* LAYER 2: PERIPHERAL SIDE CABINETS & ARCHITECTURAL PANELS (z-10) */}
+        {/* LEFT PANEL */}
+        <motion.div
+          variants={leftPanelVariants}
+          initial="initial"
+          animate="animate"
+          style={{ x: leftPanelX, y: leftPanelY }}
+          className="absolute inset-0 pointer-events-none z-10"
+        >
+          <Image
+            src="/images/hero/clean_layer_left_panel.png"
+            alt="Paima Left Architectural Window Panel"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center brightness-[0.96]"
+          />
+        </motion.div>
 
-      {/* RIGHT SIDE CABINETS */}
-      <motion.div
-        variants={rightCabinetsVariants}
-        initial="initial"
-        animate="animate"
-        style={{ x: rightCabinetsX, y: rightCabinetsY }}
-        className="absolute inset-0 pointer-events-none z-10"
-      >
-        <Image
-          src="/images/hero/clean_layer_right_cabinets.png"
-          alt="Paima Right Cabinet Architecture"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[center_35%] sm:object-[center_40%] lg:object-center brightness-[0.96]"
-        />
-      </motion.div>
+        {/* RIGHT SIDE CABINETS */}
+        <motion.div
+          variants={rightCabinetsVariants}
+          initial="initial"
+          animate="animate"
+          style={{ x: rightCabinetsX, y: rightCabinetsY }}
+          className="absolute inset-0 pointer-events-none z-10"
+        >
+          <Image
+            src="/images/hero/clean_layer_right_cabinets.png"
+            alt="Paima Right Cabinet Architecture"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center brightness-[0.96]"
+          />
+        </motion.div>
 
-      {/* =========================================================================
-          LAYER 3: CENTRAL FOCAL POINT - CENTER TABLE / ISLAND (z-20)
-          ========================================================================= */}
-      <motion.div
-        variants={islandVariants}
-        initial="initial"
-        animate="animate"
-        style={{ x: islandX, y: islandY }}
-        className="absolute inset-0 pointer-events-none z-20"
-      >
-        <Image
-          src="/images/hero/clean_layer_island.png"
-          alt="Paima Central Kitchen Island Focal Point"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[center_35%] sm:object-[center_40%] lg:object-center brightness-[0.96]"
-        />
-      </motion.div>
+        {/* LAYER 3: CENTRAL FOCAL POINT - CENTER TABLE / ISLAND (z-20) */}
+        <motion.div
+          variants={islandVariants}
+          initial="initial"
+          animate="animate"
+          style={{ x: islandX, y: islandY }}
+          className="absolute inset-0 pointer-events-none z-20"
+        >
+          <Image
+            src="/images/hero/clean_layer_island.png"
+            alt="Paima Central Kitchen Island Focal Point"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center brightness-[0.96]"
+          />
+        </motion.div>
 
-      {/* Ambient Subtle Warm Vignette Overlay across all layers for unified lighting */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2]/40 via-transparent to-transparent pointer-events-none z-25" />
+        {/* Ambient Subtle Warm Vignette Overlay across all layers for unified lighting */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#E1D4C2]/30 via-transparent to-transparent pointer-events-none z-25" />
+      </div>
 
       {/* =========================================================================
           HERO UI: CLEAN CINEMATIC FLOATING EXPLORE CTA (z-30)
-          - All text removed so architectural image is the primary focal point
-          - "EXPLORE" CTA button cleanly placed at bottom-right on desktop, centered on mobile
+          - "EXPLORE" CTA button cleanly placed at bottom-right on desktop & tablet, centered on mobile
           ========================================================================= */}
       <motion.div
         variants={bottomContentVariants}
         initial="initial"
         animate="animate"
-        className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pb-6 sm:pb-12 lg:pb-16 pt-4 flex justify-center sm:justify-end pointer-events-auto"
+        className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pt-4 sm:pt-6 lg:pt-8 lg:pb-16 flex justify-center sm:justify-end pointer-events-auto"
       >
         <Link
           href="/portfolio"

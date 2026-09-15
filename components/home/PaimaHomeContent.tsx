@@ -53,7 +53,7 @@ export function PaimaHomeContent() {
       {/* ================= FEATURED ESTATES & INTERIORS ================= */}
       <section
         aria-label="Prime Curated Properties"
-        className="py-16 sm:py-24 lg:py-32 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto"
+        className="pt-6 sm:pt-12 lg:pt-32 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto"
       >
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
           <SlideFromLeft>
