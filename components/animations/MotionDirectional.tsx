@@ -192,14 +192,14 @@ export function MaskedHeadingReveal({
 }
 
 /* =========================================================================
-   3. 3D & DEPTH CARD REVEALS
+   3. 3D & DEPTH CARD REVEALS (SLOW LUXURY EDITORIAL MOTION)
    ========================================================================= */
 
 export function Element3DReveal({
   children,
   delay = 0,
   className = "",
-  duration = 0.8,
+  duration = 1.2,
 }: DirectionalProps) {
   const shouldReduceMotion = useReducedMotion();
   const isClient = useIsClient();
@@ -210,9 +210,36 @@ export function Element3DReveal({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 22, scale: 0.985 }}
+      initial={{ opacity: 0, y: 32, scale: 0.985 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-30px" }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration, delay, ease: luxuryEase }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export function SlowCardReveal({
+  children,
+  delay = 0,
+  className = "",
+  duration = 1.2,
+  distance = 32,
+}: DirectionalProps & { distance?: number }) {
+  const shouldReduceMotion = useReducedMotion();
+  const isClient = useIsClient();
+
+  if (shouldReduceMotion || !isClient) {
+    return <div className={className}>{children}</div>;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: distance, scale: 0.985 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
       transition={{ duration, delay, ease: luxuryEase }}
       className={className}
     >
@@ -222,7 +249,7 @@ export function Element3DReveal({
 }
 
 export function CardDropFromTop(props: DirectionalProps) {
-  return <Element3DReveal {...props} />;
+  return <SlowCardReveal {...props} />;
 }
 
 /* =========================================================================
@@ -293,14 +320,14 @@ export function ParallaxImage({
 }
 
 /* =========================================================================
-   5. STAGGER CONTAINERS & ITEMS
+   5. STAGGER CONTAINERS & ITEMS (SLOW ARCHITECTURAL FLOAT-UP)
    ========================================================================= */
 
 export function StaggerContainer({
   children,
   className = "",
-  staggerDelay = 0.1,
-  delayChildren = 0.05,
+  staggerDelay = 0.16,
+  delayChildren = 0.08,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -318,7 +345,7 @@ export function StaggerContainer({
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-30px" }}
+      viewport={{ once: true, margin: "-40px" }}
       variants={{
         hidden: { opacity: 0 },
         visible: {
@@ -353,12 +380,12 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 20, scale: 0.985 },
+        hidden: { opacity: 0, y: 32, scale: 0.985 },
         visible: {
           opacity: 1,
           y: 0,
           scale: 1,
-          transition: { duration: 0.75, ease: luxuryEase },
+          transition: { duration: 1.2, ease: luxuryEase },
         },
       }}
       className={className}

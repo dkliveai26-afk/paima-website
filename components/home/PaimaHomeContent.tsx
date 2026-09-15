@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Key, Waves } from "lucide-react";
 import { PROJECTS, TESTIMONIALS, SERVICES } from "@/lib/data";
 import { LuxuryMinimalistHero } from "@/components/home/LuxuryMinimalistHero";
@@ -16,10 +17,33 @@ import {
   SlideFromLeft,
   SlideFromRight,
   ParallaxImage,
+  luxuryEase,
 } from "@/components/animations/MotionDirectional";
+
+function useIsClient() {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  return isClient;
+}
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isDesktop;
+}
 
 export function PaimaHomeContent() {
   const topProjects = PROJECTS.slice(0, 3);
+  const isClient = useIsClient();
+  const isDesktop = useIsDesktop();
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <div className="relative overflow-hidden bg-[#E1D4C2] text-black">
@@ -60,56 +84,148 @@ export function PaimaHomeContent() {
           </SlideFromRight>
         </div>
 
-        {/* Gallery with Staggered 3D Element Reveals */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {topProjects.map((project) => (
-            <StaggerItem key={project.id}>
-              <article className="group relative bg-[#BEB5A9]/50 border border-[#A78D78]/40 rounded-2xl overflow-hidden shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-black hover:shadow-2xl">
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#E1D4C2]">
-                  <Image
-                    src={project.image}
-                    alt={`${project.title} - ${project.category} luxury architectural property by Paima`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-85" />
+        {/* 3-Card Architectural Slide Reveal */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {topProjects.map((project, idx) => {
+            // Unanimated fallback for SSR / Reduced Motion
+            if (!isClient || shouldReduceMotion) {
+              return (
+                <div key={project.id} className="relative">
+                  <article className="group relative bg-[#BEB5A9]/50 border border-[#A78D78]/40 rounded-2xl overflow-hidden shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-black hover:shadow-2xl">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#E1D4C2]">
+                      <Image
+                        src={project.image}
+                        alt={`${project.title} - ${project.category} luxury architectural property by Paima`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-85" />
 
-                  {/* Top Badges */}
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                    <span className="px-3 py-1 bg-[#E1D4C2] text-[9px] font-sans uppercase tracking-[0.2em] font-extrabold text-black rounded-sm border border-black">
-                      {project.category}
-                    </span>
-                    {project.price && (
-                      <span className="px-2.5 py-1 bg-[#E1D4C2] backdrop-blur-md text-[10px] font-serif text-black font-extrabold rounded-sm border border-black">
-                        {project.price}
+                      <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                        <span className="px-3 py-1 bg-[#E1D4C2] text-[9px] font-sans uppercase tracking-[0.2em] font-extrabold text-black rounded-sm border border-black">
+                          {project.category}
+                        </span>
+                        {project.price && (
+                          <span className="px-2.5 py-1 bg-[#E1D4C2] backdrop-blur-md text-[10px] font-serif text-black font-extrabold rounded-sm border border-black">
+                            {project.price}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="p-6 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between">
+                      <div>
+                        <h3 className="font-serif text-xl text-black font-extrabold">
+                          {project.title}
+                        </h3>
+                        <p className="text-[11px] text-black font-sans tracking-wide uppercase mt-1 font-bold">
+                          {project.location} &bull; {project.area}
+                        </p>
+                      </div>
+                      <Link
+                        href="/portfolio"
+                        className="p-2.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black transition-colors shadow-md border border-black"
+                        aria-label={`View ${project.title}`}
+                      >
+                        <ArrowUpRight className="w-4 h-4 text-black" />
+                      </Link>
+                    </div>
+                  </article>
+                </div>
+              );
+            }
+
+            // Desktop 3-Card Architectural Reveal Motion Settings
+            let initialMotion: { x?: string | number; y?: number; opacity: number; scale?: number } = { opacity: 0 };
+            let inViewMotion: { x?: string | number; y?: number; opacity: number; scale?: number } = { opacity: 1 };
+            let transitionConfig = { duration: 1.15, delay: 0.12, ease: luxuryEase };
+            let zIndexClass = "relative z-10";
+
+            if (isDesktop) {
+              if (idx === 0) {
+                // Left Card: starts offset behind center card, slides LEFT to 0
+                initialMotion = { x: "108%", opacity: 0, scale: 0.96 };
+                inViewMotion = { x: "0%", opacity: 1, scale: 1 };
+                transitionConfig = { duration: 1.15, delay: 0.12, ease: luxuryEase };
+                zIndexClass = "relative z-10";
+              } else if (idx === 1) {
+                // Center Card: Anchor, stays fixed in place, fades & stabilizes
+                initialMotion = { opacity: 0, scale: 0.98 };
+                inViewMotion = { opacity: 1, scale: 1 };
+                transitionConfig = { duration: 0.9, delay: 0.04, ease: luxuryEase };
+                zIndexClass = "relative z-20";
+              } else if (idx === 2) {
+                // Right Card: starts offset behind center card, slides RIGHT to 0
+                initialMotion = { x: "-108%", opacity: 0, scale: 0.96 };
+                inViewMotion = { x: "0%", opacity: 1, scale: 1 };
+                transitionConfig = { duration: 1.15, delay: 0.12, ease: luxuryEase };
+                zIndexClass = "relative z-10";
+              }
+            } else {
+              // Mobile / Tablet: Clean vertical fade-up to preserve responsive grid
+              initialMotion = { y: 24, opacity: 0 };
+              inViewMotion = { y: 0, opacity: 1 };
+              transitionConfig = { duration: 0.8, delay: idx * 0.12, ease: luxuryEase };
+              zIndexClass = "relative z-10";
+            }
+
+            return (
+              <motion.div
+                key={project.id}
+                initial={initialMotion}
+                whileInView={inViewMotion}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={transitionConfig}
+                className={zIndexClass}
+              >
+                <article className="group relative bg-[#BEB5A9]/50 border border-[#A78D78]/40 rounded-2xl overflow-hidden shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-black hover:shadow-2xl">
+                  <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#E1D4C2]">
+                    <Image
+                      src={project.image}
+                      alt={`${project.title} - ${project.category} luxury architectural property by Paima`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-85" />
+
+                    {/* Top Badges */}
+                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                      <span className="px-3 py-1 bg-[#E1D4C2] text-[9px] font-sans uppercase tracking-[0.2em] font-extrabold text-black rounded-sm border border-black">
+                        {project.category}
                       </span>
-                    )}
+                      {project.price && (
+                        <span className="px-2.5 py-1 bg-[#E1D4C2] backdrop-blur-md text-[10px] font-serif text-black font-extrabold rounded-sm border border-black">
+                          {project.price}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Card Info */}
-                <div className="p-6 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between">
-                  <div>
-                    <h3 className="font-serif text-xl text-black font-extrabold">
-                      {project.title}
-                    </h3>
-                    <p className="text-[11px] text-black font-sans tracking-wide uppercase mt-1 font-bold">
-                      {project.location} &bull; {project.area}
-                    </p>
+                  {/* Card Info */}
+                  <div className="p-6 bg-[#BEB5A9]/70 border-t border-[#A78D78]/50 flex items-center justify-between">
+                    <div>
+                      <h3 className="font-serif text-xl text-black font-extrabold">
+                        {project.title}
+                      </h3>
+                      <p className="text-[11px] text-black font-sans tracking-wide uppercase mt-1 font-bold">
+                        {project.location} &bull; {project.area}
+                      </p>
+                    </div>
+                    <Link
+                      href="/portfolio"
+                      className="p-2.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black transition-colors shadow-md border border-black"
+                      aria-label={`View ${project.title}`}
+                    >
+                      <ArrowUpRight className="w-4 h-4 text-black" />
+                    </Link>
                   </div>
-                  <Link
-                    href="/portfolio"
-                    className="p-2.5 rounded-full bg-[#A78D78] text-black hover:bg-[#BEB5A9] hover:text-black transition-colors shadow-md border border-black"
-                    aria-label={`View ${project.title}`}
-                  >
-                    <ArrowUpRight className="w-4 h-4 text-black" />
-                  </Link>
-                </div>
-              </article>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+                </article>
+              </motion.div>
+            );
+          })}
+        </div>
       </section>
 
       {/* ================= ABOUT US SECTION ================= */}
@@ -280,9 +396,46 @@ export function PaimaHomeContent() {
             </div>
           </FadeUpBottom>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TESTIMONIALS.map((t) => (
-              <StaggerItem key={t.id}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {TESTIMONIALS.map((t, idx) => {
+            if (!isClient || shouldReduceMotion) {
+              return (
+                <div key={t.id} className="h-full">
+                  <blockquote className="h-full bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl flex flex-col justify-between">
+                    <div>
+                      <span className="font-serif text-5xl text-black block mb-4 leading-none">
+                        &ldquo;
+                      </span>
+                      <p className="font-serif text-base sm:text-lg text-black font-semibold leading-relaxed mb-6">
+                        {t.quote}
+                      </p>
+                    </div>
+                    <footer className="pt-4 border-t border-[#A78D78]/50 space-y-1">
+                      <cite className="not-italic font-sans text-xs uppercase tracking-[0.18em] font-extrabold text-black block">
+                        {t.client}
+                      </cite>
+                      <p className="text-[11px] text-black font-sans font-bold">
+                        {t.title} &bull; {t.location}
+                      </p>
+                    </footer>
+                  </blockquote>
+                </div>
+              );
+            }
+
+            return (
+              <motion.div
+                key={t.id}
+                initial={{ opacity: 0, y: isDesktop ? 36 : 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{
+                  duration: 1.25,
+                  delay: 0.08 + idx * 0.2,
+                  ease: luxuryEase,
+                }}
+                className="h-full"
+              >
                 <blockquote className="h-full bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl flex flex-col justify-between">
                   <div>
                     <span className="font-serif text-5xl text-black block mb-4 leading-none">
@@ -301,9 +454,10 @@ export function PaimaHomeContent() {
                     </p>
                   </footer>
                 </blockquote>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
+              </motion.div>
+            );
+          })}
+        </div>
         </div>
       </section>
 

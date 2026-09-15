@@ -7,6 +7,7 @@ import {
   SlideFromLeft,
   SlideFromRight,
   FadeUpBottom,
+  SlowCardReveal,
 } from "@/components/animations/MotionDirectional";
 
 export const metadata: Metadata = constructMetadata({
@@ -91,7 +92,7 @@ export default function ServicesPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mt-12">
           {PROCESS_STEPS.map((item, idx) => (
-            <FadeUpBottom key={item.step} delay={0.08 * idx}>
+            <SlowCardReveal key={item.step} delay={0.12 * idx}>
               <div className="p-6 bg-[#BEB5A9]/60 border border-[#A78D78]/50 rounded-2xl h-full flex flex-col justify-between hover:border-black transition-colors duration-400 shadow-xl">
                 <div>
                   <span className="font-serif text-3xl text-black font-black block mb-4">
@@ -111,7 +112,7 @@ export default function ServicesPage() {
                   </span>
                 </div>
               </div>
-            </FadeUpBottom>
+            </SlowCardReveal>
           ))}
         </div>
       </section>

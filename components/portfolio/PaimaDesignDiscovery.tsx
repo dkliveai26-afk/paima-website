@@ -45,33 +45,35 @@ const VERIFIED_FALLBACKS = [
   "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=1200&q=80",
 ];
 
-// Motion Variants for Staggered Drop-Down Reveal
+import { luxuryEase } from "@/components/animations/MotionDirectional";
+
+// Motion Variants for Slow Luxury Staggered Upward Reveal
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.02,
+      staggerChildren: 0.08,
+      delayChildren: 0.04,
     },
   },
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: -20, scale: 0.98 },
+  hidden: { opacity: 0, y: 32, scale: 0.985 },
   show: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
-      duration: 0.35,
-      ease: "easeOut",
+      duration: 1.15,
+      ease: luxuryEase,
     },
   },
   exit: {
     opacity: 0,
     y: 15,
-    transition: { duration: 0.15, ease: "easeIn" },
+    transition: { duration: 0.2, ease: "easeIn" },
   },
 };
 

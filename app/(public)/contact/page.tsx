@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { constructMetadata, generateFAQSchema } from "@/lib/seo";
 import { AGENCY_INFO } from "@/lib/data";
 import { ContactForm } from "@/components/ui/ContactForm";
-import { SlideFromLeft, SlideFromRight, FadeUpBottom } from "@/components/animations/MotionDirectional";
+import { SlideFromLeft, SlideFromRight, FadeUpBottom, SlowCardReveal } from "@/components/animations/MotionDirectional";
 
 export const metadata: Metadata = constructMetadata({
   title: "Private Inquiries & Studio Concierge | Paima Luxury Interiors",
@@ -126,7 +126,7 @@ export default function ContactPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {PAIMA_FAQS.map((faq, idx) => (
-            <FadeUpBottom key={idx} delay={0.1 * idx}>
+            <SlowCardReveal key={idx} delay={0.14 * idx}>
               <div className="bg-[#BEB5A9]/50 p-6 sm:p-8 rounded-2xl border border-[#A78D78]/50 space-y-3 shadow-lg">
                 <h3 className="font-serif text-lg text-black font-extrabold">
                   {faq.question}
@@ -135,7 +135,7 @@ export default function ContactPage() {
                   {faq.answer}
                 </p>
               </div>
-            </FadeUpBottom>
+            </SlowCardReveal>
           ))}
         </div>
       </section>

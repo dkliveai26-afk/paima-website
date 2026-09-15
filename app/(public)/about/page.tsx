@@ -12,6 +12,7 @@ import {
   StaggerItem,
   ParallaxImage,
   TextSlideFromTop,
+  SlowCardReveal,
 } from "@/components/animations/MotionDirectional";
 import { Compass, Hammer, Layers, Sparkles, VolumeX } from "lucide-react";
 
@@ -145,7 +146,7 @@ export default function AboutPage() {
           </SlideFromRight>
 
           {/* 3. CRAFTSMANSHIP (CARD - SPAN 4) */}
-          <FadeUpBottom delay={0.1} className="md:col-span-4">
+          <SlowCardReveal delay={0.1} className="md:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -165,10 +166,10 @@ export default function AboutPage() {
                 Hand-cut Roman Travertine &bull; Fluted Oak
               </div>
             </div>
-          </FadeUpBottom>
+          </SlowCardReveal>
 
           {/* 4. MATERIAL INTELLIGENCE (CARD - SPAN 4) */}
-          <FadeUpBottom delay={0.2} className="md:col-span-4">
+          <SlowCardReveal delay={0.24} className="md:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -188,10 +189,10 @@ export default function AboutPage() {
                 Unpolished Brass &bull; Belgian Linen
               </div>
             </div>
-          </FadeUpBottom>
+          </SlowCardReveal>
 
           {/* 5. SPATIAL EXPERIENCE (CARD - SPAN 4) */}
-          <FadeUpBottom delay={0.3} className="md:col-span-4">
+          <SlowCardReveal delay={0.38} className="md:col-span-4">
             <div className="group relative bg-[#BEB5A9]/60 p-8 border border-[#A78D78]/50 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl flex flex-col justify-between h-full space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -211,10 +212,10 @@ export default function AboutPage() {
                 Concealed Acoustic Backing &bull; Low Reverberation
               </div>
             </div>
-          </FadeUpBottom>
+          </SlowCardReveal>
 
           {/* 6. ATTENTION TO DETAIL (HERO BOTTOM CARD - SPAN 12) */}
-          <FadeUpBottom delay={0.25} className="md:col-span-12">
+          <SlowCardReveal delay={0.2} className="md:col-span-12">
             <div className="group relative bg-[#BEB5A9] border border-[#A78D78] p-8 sm:p-12 rounded-2xl shadow-xl hover:-translate-y-1.5 transition-all duration-500 hover:border-black hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-7 space-y-4">
                 <span className="px-3.5 py-1.5 bg-[#E1D4C2] text-black text-[9px] font-sans uppercase tracking-[0.25em] font-extrabold border border-black rounded-sm shadow-sm inline-block">
@@ -249,7 +250,7 @@ export default function AboutPage() {
                 />
               </div>
             </div>
-          </FadeUpBottom>
+          </SlowCardReveal>
         </div>
       </section>
 
@@ -268,9 +269,8 @@ export default function AboutPage() {
           <div className="space-y-12 sm:space-y-16">
             {TIMELINE.map((item, idx) => {
               const isEven = idx % 2 === 0;
-              const RevealComponent = isEven ? SlideFromRight : SlideFromLeft;
               return (
-                <RevealComponent key={item.year} delay={0.1 * idx}>
+                <SlowCardReveal key={item.year} delay={0.12 * idx}>
                   <div
                     className={`relative flex flex-col md:flex-row items-start ${
                       isEven ? "md:flex-row-reverse" : ""
@@ -297,7 +297,7 @@ export default function AboutPage() {
                       <span className="w-2 h-2 rounded-full bg-black" />
                     </div>
                   </div>
-                </RevealComponent>
+                </SlowCardReveal>
               );
             })}
           </div>

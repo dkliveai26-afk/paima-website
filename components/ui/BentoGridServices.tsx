@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronDown } from "lucide-react";
 import { SERVICES, type Service } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import { SlideFromLeft, SlideFromRight } from "@/components/animations/MotionDirectional";
+import { SlowCardReveal } from "@/components/animations/MotionDirectional";
 
 export function BentoGridServices() {
   const [expandedId, setExpandedId] = useState<string | null>(SERVICES[0].id);
@@ -19,10 +19,9 @@ export function BentoGridServices() {
     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 text-black">
       {SERVICES.map((service: Service, idx: number) => {
         const isExpanded = expandedId === service.id;
-        const RevealComponent = idx % 2 === 0 ? SlideFromLeft : SlideFromRight;
 
         return (
-          <RevealComponent key={service.id} delay={0.1 * idx} className={cn("w-full", service.span)}>
+          <SlowCardReveal key={service.id} delay={0.14 * idx} className={cn("w-full", service.span)}>
             <motion.div
               layout
               className={cn(
@@ -111,7 +110,7 @@ export function BentoGridServices() {
                 </div>
               </div>
             </motion.div>
-          </RevealComponent>
+          </SlowCardReveal>
         );
       })}
     </div>
