@@ -2,8 +2,10 @@ import { MongoClient, Db } from "mongodb";
 
 const DEFAULT_MONGODB_URI = "mongodb://127.0.0.1:27017/paima_atelier";
 
-const options = {};
-
+const options = {
+  serverSelectionTimeoutMS: 5000,
+  connectTimeoutMS: 5000,
+};
 
 let client: MongoClient | null = null;
 let clientPromise: Promise<MongoClient> | null = null;
@@ -13,14 +15,18 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-function getMongoUri(): string {
-  return process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
+function getMongoUri(): string | null {
+  if (process.env.MONGODB_URI && process.env.MONGODB_URI.trim().length > 0) {
+    return process.env.MONGODB_URI.trim();
+  }
+  if (process.env.NODE_ENV === "development") {
+    return DEFAULT_MONGODB_URI;
+  }
+  return null;
 }
 
-
 export function isMongoConfigured(): boolean {
-  const uri = getMongoUri();
-  return Boolean(uri && uri.trim().length > 0);
+  return Boolean(process.env.MONGODB_URI && process.env.MONGODB_URI.trim().length > 0);
 }
 
 export async function getMongoClient(): Promise<MongoClient | null> {
