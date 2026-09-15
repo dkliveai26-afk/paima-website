@@ -81,11 +81,9 @@ export function LuxuryMinimalistHero() {
       opacity: 1,
       x: 0,
       transition: {
-        delay: 0.35,
-        duration: 0.9,
-        type: "spring",
-        stiffness: 80,
-        damping: 20,
+        delay: 0.25,
+        duration: 1.4,
+        ease: [0.16, 1, 0.3, 1],
       },
     },
   };
@@ -99,30 +97,26 @@ export function LuxuryMinimalistHero() {
       opacity: 1,
       x: 0,
       transition: {
-        delay: 0.35,
-        duration: 0.9,
-        type: "spring",
-        stiffness: 80,
-        damping: 20,
+        delay: 0.25,
+        duration: 1.4,
+        ease: [0.16, 1, 0.3, 1],
       },
     },
   };
 
+  // Central architectural table/island: Slow, weighted top-to-bottom cinematic drop
   const islandVariants: Variants = {
     initial: {
       opacity: 0,
-      y: -120,
+      y: -150,
     },
     animate: {
       opacity: 1,
       y: 0,
       transition: {
-        delay: 0.5,
-        duration: 1.1,
-        type: "spring",
-        stiffness: 75,
-        damping: 16,
-        mass: 0.9,
+        delay: 0.35,
+        duration: 1.8,
+        ease: [0.16, 1, 0.3, 1],
       },
     },
   };
@@ -176,56 +170,69 @@ export function LuxuryMinimalistHero() {
         {/* LAYER 2: PERIPHERAL SIDE CABINETS & ARCHITECTURAL PANELS (z-10) */}
         {/* LEFT PANEL */}
         <motion.div
-          variants={leftPanelVariants}
-          initial="initial"
-          animate="animate"
           style={{ x: leftPanelX, y: leftPanelY }}
           className="absolute inset-0 pointer-events-none z-10"
         >
-          <Image
-            src="/images/hero/clean_layer_left_panel.png"
-            alt="Paima Left Architectural Window Panel"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center brightness-[0.96]"
-          />
+          <motion.div
+            variants={leftPanelVariants}
+            initial="initial"
+            animate="animate"
+            className="relative w-full h-full"
+          >
+            <Image
+              src="/images/hero/clean_layer_left_panel.png"
+              alt="Paima Left Architectural Window Panel"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center brightness-[0.96]"
+            />
+          </motion.div>
         </motion.div>
 
         {/* RIGHT SIDE CABINETS */}
         <motion.div
-          variants={rightCabinetsVariants}
-          initial="initial"
-          animate="animate"
           style={{ x: rightCabinetsX, y: rightCabinetsY }}
           className="absolute inset-0 pointer-events-none z-10"
         >
-          <Image
-            src="/images/hero/clean_layer_right_cabinets.png"
-            alt="Paima Right Cabinet Architecture"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center brightness-[0.96]"
-          />
+          <motion.div
+            variants={rightCabinetsVariants}
+            initial="initial"
+            animate="animate"
+            className="relative w-full h-full"
+          >
+            <Image
+              src="/images/hero/clean_layer_right_cabinets.png"
+              alt="Paima Right Cabinet Architecture"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center brightness-[0.96]"
+            />
+          </motion.div>
         </motion.div>
 
         {/* LAYER 3: CENTRAL FOCAL POINT - CENTER TABLE / ISLAND (z-20) */}
+        {/* Slow cinematic top-to-bottom drop motion */}
         <motion.div
-          variants={islandVariants}
-          initial="initial"
-          animate="animate"
           style={{ x: islandX, y: islandY }}
           className="absolute inset-0 pointer-events-none z-20"
         >
-          <Image
-            src="/images/hero/clean_layer_island.png"
-            alt="Paima Central Kitchen Island Focal Point"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center brightness-[0.96]"
-          />
+          <motion.div
+            variants={islandVariants}
+            initial="initial"
+            animate="animate"
+            className="relative w-full h-full"
+          >
+            <Image
+              src="/images/hero/clean_layer_island.png"
+              alt="Paima Central Kitchen Island Focal Point"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center brightness-[0.96]"
+            />
+          </motion.div>
         </motion.div>
 
         {/* Ambient Subtle Warm Vignette Overlay across all layers for unified lighting */}
