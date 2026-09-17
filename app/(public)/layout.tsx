@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/animations/SmoothScroll";
 import PaimaConcierge from "@/components/ui/PaimaConcierge";
+import { AuthPromptModal } from "@/components/auth/AuthPromptModal";
 
 export default function PublicLayout({
   children,
@@ -23,6 +24,7 @@ export default function PublicLayout({
       </main>
       <Footer />
       <PaimaConcierge />
+      <AuthPromptModal />
     </SmoothScroll>
   );
 }
