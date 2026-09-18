@@ -104,3 +104,46 @@
   -webkit-text-stroke: 1px rgba(0, 0, 0, 0.7);
   color: transparent;
 }
+
+/* Luxury Clerk Modal & Auth Glassmorphism */
+.cl-modalBackdrop {
+  background-color: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.cl-card, .cl-cardBox {
+  background: rgba(225, 212, 194, 0.95) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(167, 141, 120, 0.5) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+  border-radius: 1.5rem !important;
+}
+
+.cl-socialButtonsBlockButton {
+  background-color: rgba(190, 181, 169, 0.45) !important;
+  border: 1px solid rgba(167, 141, 120, 0.6) !important;
+  transition: all 0.25s ease !important;
+}
+
+.cl-socialButtonsBlockButton:hover {
+  background-color: rgba(190, 181, 169, 0.8) !important;
+  border-color: #000000 !important;
+}
+
+.cl-formButtonPrimary {
+  background-color: #1A1A1A !important;
+  color: #E1D4C2 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  border-radius: 9999px !important;
+  transition: all 0.25s ease !important;
+}
+
+.cl-formButtonPrimary:hover {
+  background-color: #000000 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25) !important;
+}
+

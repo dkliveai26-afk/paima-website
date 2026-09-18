@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import { Check, Send, AlertCircle, Calendar } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Check, Send, AlertCircle, Calendar, Lock, ShieldCheck } from "lucide-react";
+import { useAuth, useUser, useClerk } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { GoogleAddressAutocomplete } from "@/components/ui/GoogleAddressAutocomplete";
 
@@ -46,6 +47,10 @@ function playSuccessSound() {
 }
 
 export function ContactForm() {
+  const { isSignedIn } = useAuth();
+  const { user } = useUser();
+  const { openSignUp } = useClerk();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -62,10 +67,29 @@ export function ContactForm() {
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Auto-populate authenticated patron name & email if available
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: prev.name || user.fullName || "",
+        email: prev.email || user.primaryEmailAddress?.emailAddress || "",
+      }));
+    }
+  }, [user]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
     setErrorMessage(null);
+
+    // Guard: Unauthenticated visitors cannot submit booking
+    if (!isSignedIn) {
+      setErrorMessage("Authentication required. Please sign in or create an account to submit your private consultation dossier.");
+      openSignUp();
+      return;
+    }
+
+    setSubmitting(true);
 
     try {
       const res = await fetch("/api/bookings", {
@@ -87,6 +111,9 @@ export function ContactForm() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (res.status === 401) {
+          openSignUp();
+        }
         throw new Error(data.error || "Failed to submit booking dossier.");
       }
 
@@ -322,6 +349,23 @@ export function ContactForm() {
           placeholder="Describe your architectural aspirations, preferred timeline, or material sensibilities..."
         />
       </div>
+
+      {/* Authentication Notice if Signed Out */}
+      {!isSignedIn && (
+        <div className="p-3.5 bg-[#E1D4C2]/90 border border-[#A78D78] rounded-xl flex items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-2 text-xs font-bold text-black">
+            <Lock className="w-4 h-4 text-black/70 shrink-0" />
+            <span>Sign in required to verify and transmit private dossier</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => openSignUp()}
+            className="px-3.5 py-1.5 rounded-full bg-black text-[#E1D4C2] text-[10px] font-sans uppercase tracking-wider font-extrabold shrink-0 hover:bg-[#333] transition-colors min-h-[36px]"
+          >
+            Get Started
+          </button>
+        </div>
+      )}
 
       {/* Submit Button */}
       <button

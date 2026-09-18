@@ -42,13 +42,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Associate with Clerk User ID if authenticated
+    // Verify Clerk Authentication on Server
     let clerkUserId: string | null = null;
     try {
       const { userId } = await auth();
       clerkUserId = userId;
     } catch {
-      // Guest booking
+      clerkUserId = null;
+    }
+
+    if (!clerkUserId) {
+      return NextResponse.json(
+        { error: "Authentication required. Please sign in or create an account to submit your private consultation dossier." },
+        { status: 401 }
+      );
     }
 
     const normalizedEmail = email.trim().toLowerCase();
