@@ -1,10 +1,48 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, LogOut, ChevronRight, User as UserIcon } from "lucide-react";
+import { Settings, LogOut, ChevronRight } from "lucide-react";
+
+function UserAvatar({
+  imageUrl,
+  name,
+  sizeClass = "w-10 h-10",
+  textClass = "text-sm",
+}: {
+  imageUrl?: string | null;
+  name: string;
+  sizeClass?: string;
+  textClass?: string;
+}) {
+  const [hasError, setHasError] = useState(false);
+  const initial = name?.trim()?.charAt(0)?.toUpperCase() || "P";
+
+  useEffect(() => {
+    setHasError(false);
+  }, [imageUrl]);
+
+  return (
+    <div
+      className={`relative ${sizeClass} rounded-full overflow-hidden border border-black/80 bg-[#BEB5A9] flex items-center justify-center shrink-0 select-none shadow-sm`}
+    >
+      {imageUrl && !hasError ? (
+        <img
+          src={imageUrl}
+          alt=""
+          referrerPolicy="no-referrer"
+          onError={() => setHasError(true)}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <span className={`font-bold font-sans ${textClass} text-[#1A1A1A]`}>
+          {initial}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export function PaimaUserProfile() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -42,7 +80,7 @@ export function PaimaUserProfile() {
     return null;
   }
 
-  const fullName = user.fullName || user.username || "Client Patron";
+  const fullName = user.fullName || user.firstName || user.username || "Client Patron";
   const primaryEmail = user.primaryEmailAddress?.emailAddress || "";
   const imageUrl = user.imageUrl;
 
@@ -52,24 +90,17 @@ export function PaimaUserProfile() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex items-center justify-center w-10 h-10 rounded-full border border-black/80 bg-[#BEB5A9] overflow-hidden shadow-md hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none"
+        className="relative flex items-center justify-center rounded-full hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none"
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label="Open user profile menu"
       >
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={fullName}
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-[#A78D78] text-[#1A1A1A] font-bold text-sm uppercase">
-            {fullName.charAt(0) || <UserIcon className="w-4 h-4" />}
-          </div>
-        )}
+        <UserAvatar
+          imageUrl={imageUrl}
+          name={fullName}
+          sizeClass="w-10 h-10"
+          textClass="text-sm"
+        />
       </button>
 
       {/* Luxury Translucent Glass Profile Dropdown (Matches Reference Image 3) */}
@@ -84,21 +115,12 @@ export function PaimaUserProfile() {
           >
             {/* Top User Info Section */}
             <div className="flex items-center gap-3 pb-3.5 border-b border-[#A78D78]/35">
-              <div className="relative w-11 h-11 rounded-full overflow-hidden border border-black/70 bg-[#BEB5A9] shrink-0 shadow-sm">
-                {imageUrl ? (
-                  <Image
-                    src={imageUrl}
-                    alt={fullName}
-                    width={44}
-                    height={44}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-[#A78D78] text-black font-bold text-base uppercase">
-                    {fullName.charAt(0)}
-                  </div>
-                )}
-              </div>
+              <UserAvatar
+                imageUrl={imageUrl}
+                name={fullName}
+                sizeClass="w-11 h-11"
+                textClass="text-base"
+              />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-[#1A1A1A] truncate leading-tight">
                   {fullName}

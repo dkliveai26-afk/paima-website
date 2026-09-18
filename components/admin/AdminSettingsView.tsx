@@ -245,7 +245,8 @@ export function AdminSettingsView() {
             {adminUser?.imageUrl ? (
               <img
                 src={adminUser.imageUrl}
-                alt="Admin"
+                alt=""
+                referrerPolicy="no-referrer"
                 className="w-14 h-14 rounded-2xl object-cover border border-[#E5D5C5]"
               />
             ) : (

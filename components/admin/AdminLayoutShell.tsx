@@ -262,7 +262,8 @@ export function AdminLayoutShell({
                 {activeAdminUser?.imageUrl ? (
                   <img
                     src={activeAdminUser.imageUrl}
-                    alt={activeAdminUser.fullName || "Admin"}
+                    alt=""
+                    referrerPolicy="no-referrer"
                     className="w-9 h-9 rounded-full object-cover border border-[#D8C5BD]"
                   />
                 ) : (
