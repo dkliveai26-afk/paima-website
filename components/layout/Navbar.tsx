@@ -6,12 +6,9 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowUpRight } from "lucide-react";
-import {
-  SignInButton,
-  SignUpButton,
-  Show,
-  UserButton,
-} from "@clerk/nextjs";
+import { Show } from "@clerk/nextjs";
+import { usePaimaAuth } from "@/components/auth/PaimaAuthContext";
+import { PaimaUserProfile } from "@/components/auth/PaimaUserProfile";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -30,6 +27,7 @@ const springTransition = {
 
 export function Navbar() {
   const pathname = usePathname();
+  const { openAuthModal } = usePaimaAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -147,27 +145,19 @@ export function Navbar() {
           >
             {/* WHEN SIGNED OUT: SINGLE AUTH BUTTON */}
             <Show when="signed-out">
-              <SignUpButton mode="modal">
-                <button
-                  type="button"
-                  className="hidden lg:inline-flex items-center px-4 py-2 rounded-full border border-black bg-[#BEB5A9] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.18em] font-extrabold transition-all shadow-sm focus:outline-none whitespace-nowrap"
-                >
-                  Get Started
-                </button>
-              </SignUpButton>
+              <button
+                type="button"
+                onClick={() => openAuthModal()}
+                className="hidden lg:inline-flex items-center px-4 py-2 rounded-full border border-black bg-[#BEB5A9] text-black hover:bg-[#A78D78] text-xs font-sans uppercase tracking-[0.18em] font-extrabold transition-all shadow-sm focus:outline-none whitespace-nowrap"
+              >
+                Get Started
+              </button>
             </Show>
 
             {/* WHEN SIGNED IN */}
             <Show when="signed-in">
-              <div className="flex items-center gap-2">
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox:
-                        "w-9 h-9 border border-black rounded-full shadow-md hover:scale-105 transition-transform",
-                    },
-                  }}
-                />
+              <div className="flex items-center">
+                <PaimaUserProfile />
               </div>
             </Show>
 
@@ -268,29 +258,24 @@ export function Navbar() {
             {/* Bottom Auth & Concierge Actions */}
             <div className="pt-6 border-t border-[#A78D78]/40 space-y-3.5 shrink-0 pb-[calc(env(safe-area-inset-bottom,0px)+1rem)]">
               <Show when="signed-out">
-                <SignUpButton mode="modal">
-                  <button
-                    type="button"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full py-3 bg-[#BEB5A9] text-black text-center text-xs uppercase tracking-[0.16em] font-extrabold rounded-full border border-black min-h-[44px]"
-                  >
-                    Get Started
-                  </button>
-                </SignUpButton>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuthModal();
+                  }}
+                  className="w-full py-3 bg-[#BEB5A9] text-black text-center text-xs uppercase tracking-[0.16em] font-extrabold rounded-full border border-black min-h-[44px] hover:bg-[#A78D78] transition-colors"
+                >
+                  Get Started
+                </button>
               </Show>
 
               <Show when="signed-in">
-                <div className="flex items-center gap-3 p-3 bg-[#BEB5A9]/60 border border-[#A78D78] rounded-xl">
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        avatarBox: "w-9 h-9 border border-black rounded-full shadow-md",
-                      },
-                    }}
-                  />
+                <div className="flex items-center justify-between p-3 bg-[#BEB5A9]/60 border border-[#A78D78] rounded-xl">
                   <span className="text-xs font-sans uppercase tracking-wider font-extrabold text-black">
-                    Your Profile &amp; Settings
+                    Your Profile &amp; Account
                   </span>
+                  <PaimaUserProfile />
                 </div>
               </Show>
 

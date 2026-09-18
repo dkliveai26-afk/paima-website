@@ -107,29 +107,68 @@
 
 /* Luxury Clerk Modal & Auth Glassmorphism */
 .cl-modalBackdrop {
-  background-color: rgba(0, 0, 0, 0.65) !important;
+  background-color: rgba(0, 0, 0, 0.55) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
 }
 
-.cl-card, .cl-cardBox {
-  background: rgba(225, 212, 194, 0.95) !important;
+.cl-card, .cl-cardBox, .cl-userButtonPopoverCard, .cl-userProfile-root {
+  background: rgba(225, 212, 194, 0.92) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
   border: 1px solid rgba(167, 141, 120, 0.5) !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
   border-radius: 1.5rem !important;
+  color: #1A1A1A !important;
+}
+
+/* COMPLETE SUPPRESSION OF CLERK DEVELOPMENT MODE BANNER & BLACK RECTANGLE */
+.cl-devModeBadge,
+.cl-internal-b3fm6y,
+.cl-footerAction,
+[data-localization-key="devModeBadge"],
+div[class*="devModeBadge"],
+div[class*="DevModeBadge"],
+div[class*="cl-devMode"],
+div[class*="dev-mode"],
+.cl-dev-mode-badge {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .cl-socialButtonsBlockButton {
-  background-color: rgba(190, 181, 169, 0.45) !important;
-  border: 1px solid rgba(167, 141, 120, 0.6) !important;
+  background-color: rgba(245, 242, 235, 0.9) !important;
+  border: 1px solid rgba(167, 141, 120, 0.5) !important;
+  color: #1A1A1A !important;
+  font-weight: 800 !important;
   transition: all 0.25s ease !important;
 }
 
 .cl-socialButtonsBlockButton:hover {
-  background-color: rgba(190, 181, 169, 0.8) !important;
+  background-color: #FFFFFF !important;
   border-color: #000000 !important;
+}
+
+.cl-socialButtonsBlockButtonText {
+  color: #1A1A1A !important;
+  font-weight: 800 !important;
+}
+
+.cl-headerTitle, .cl-userProfile-navbar, .cl-profileSectionTitleText {
+  color: #1A1A1A !important;
+  font-family: var(--font-serif), Georgia, serif !important;
+}
+
+.cl-headerSubtitle, .cl-formFieldLabel, .cl-userButtonPopoverActionButtonText {
+  color: #1A1A1A !important;
+  font-weight: 700 !important;
 }
 
 .cl-formButtonPrimary {
@@ -140,6 +179,7 @@
   text-transform: uppercase !important;
   border-radius: 9999px !important;
   transition: all 0.25s ease !important;
+  border: 1px solid #000000 !important;
 }
 
 .cl-formButtonPrimary:hover {

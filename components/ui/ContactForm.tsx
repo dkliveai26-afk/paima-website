@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Check, Send, AlertCircle, Calendar, Lock, ShieldCheck } from "lucide-react";
-import { useAuth, useUser, useClerk } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { usePaimaAuth } from "@/components/auth/PaimaAuthContext";
 import { cn } from "@/lib/utils";
 import { GoogleAddressAutocomplete } from "@/components/ui/GoogleAddressAutocomplete";
 
@@ -49,7 +50,7 @@ function playSuccessSound() {
 export function ContactForm() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
-  const { openSignUp } = useClerk();
+  const { openAuthModal } = usePaimaAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -85,7 +86,7 @@ export function ContactForm() {
     // Guard: Unauthenticated visitors cannot submit booking
     if (!isSignedIn) {
       setErrorMessage("Authentication required. Please sign in or create an account to submit your private consultation dossier.");
-      openSignUp();
+      openAuthModal();
       return;
     }
 
@@ -112,7 +113,7 @@ export function ContactForm() {
 
       if (!res.ok) {
         if (res.status === 401) {
-          openSignUp();
+          openAuthModal();
         }
         throw new Error(data.error || "Failed to submit booking dossier.");
       }
@@ -359,7 +360,7 @@ export function ContactForm() {
           </div>
           <button
             type="button"
-            onClick={() => openSignUp()}
+            onClick={() => openAuthModal()}
             className="px-3.5 py-1.5 rounded-full bg-black text-[#E1D4C2] text-[10px] font-sans uppercase tracking-wider font-extrabold shrink-0 hover:bg-[#333] transition-colors min-h-[36px]"
           >
             Get Started

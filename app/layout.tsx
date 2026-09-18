@@ -9,6 +9,8 @@ import {
   generateWebSiteSchema,
 } from "@/lib/seo";
 import { WelcomeEmailTrigger } from "@/components/auth/WelcomeEmailTrigger";
+import { PaimaAuthProvider } from "@/components/auth/PaimaAuthContext";
+import { PaimaAuthModal } from "@/components/auth/PaimaAuthModal";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -86,8 +88,11 @@ export default function RootLayout({
             },
           }}
         >
-          <WelcomeEmailTrigger />
-          {children}
+          <PaimaAuthProvider>
+            <WelcomeEmailTrigger />
+            {children}
+            <PaimaAuthModal />
+          </PaimaAuthProvider>
         </ClerkProvider>
       </body>
     </html>
