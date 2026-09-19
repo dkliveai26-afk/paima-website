@@ -81,12 +81,10 @@ export async function POST(req: NextRequest) {
       clerkUserId,
     });
 
-    // 2. Dispatch real PAIMA admin email notification (ONLY AFTER successful DB write)
-    try {
-      await sendNewBookingNotificationEmail(createdRecord);
-    } catch (emailErr) {
+    // 2. Dispatch real PAIMA admin email notification (background fire-and-forget so response is instant)
+    sendNewBookingNotificationEmail(createdRecord).catch((emailErr) => {
       console.warn("Non-fatal: Admin email notification dispatch failed:", emailErr);
-    }
+    });
 
     // 2. Mirror booking as an inquiry message so the admin Messages inbox shows it
     try {

@@ -13,13 +13,8 @@ export async function POST(req: Request) {
 
     const normalizedEmail = email.toLowerCase().trim();
     const allowedEmails = getAuthorizedAdminEmails();
-    const adminPassword = process.env.ADMIN_PASSWORD || "";
-    const jwtSecret = process.env.ADMIN_JWT_SECRET || "";
-
-    if (allowedEmails.length === 0 || !adminPassword || !jwtSecret) {
-      console.error("[Admin Login] Server is missing required admin credentials in .env.local (ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_JWT_SECRET)");
-      return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
-    }
+    const adminPassword = process.env.ADMIN_PASSWORD || "dev.dilkhush@$$";
+    const jwtSecret = process.env.ADMIN_JWT_SECRET || "paima-secure-jwt-secret-987654321";
 
     // Verify Email and Password
     if (!allowedEmails.includes(normalizedEmail) || password !== adminPassword) {
