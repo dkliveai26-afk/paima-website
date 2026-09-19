@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     const normalizedName = fullName.trim();
     const normalizedService = (service || "Haute Residential Architecture").toString().trim();
 
-    // 1. Create the booking record in MongoDB
+    // 1. Create the booking record
     const createdRecord = await createBooking({
       fullName: normalizedName,
       email: normalizedEmail,
@@ -69,42 +69,37 @@ export async function POST(req: NextRequest) {
       clerkUserId,
     });
 
-    // 2. Dispatch real PAIMA admin email notification (ONLY AFTER successful DB write)
-    try {
-      await sendNewBookingNotificationEmail(createdRecord);
-    } catch (emailErr) {
+    // 2. Dispatch real PAIMA admin email notification (Asynchronous background task)
+    sendNewBookingNotificationEmail(createdRecord).catch((emailErr) => {
       console.warn("Non-fatal: Admin email notification dispatch failed:", emailErr);
-    }
+    });
 
-    // 2. Mirror booking as an inquiry message so the admin Messages inbox shows it
-    try {
-      await createMessage({
+    // 3. Mirror booking as an inquiry message and record audit activity in parallel background task
+    Promise.allSettled([
+      createMessage({
         name: normalizedName,
         email: normalizedEmail,
         phone: (phone || "").toString().trim(),
         subject: `[${createdRecord.bookingId}] ${normalizedService} — ${normalizedName}`,
         message: detailsText,
         service: normalizedService,
-      });
-    } catch (msgErr) {
-      // Non-fatal: log error but do not fail the booking submission
-      console.warn("Could not create message mirror for booking:", msgErr);
-    }
-
-    // 3. Record audit activity
-    await recordActivity({
-      actorId: clerkUserId,
-      actorEmail: normalizedEmail,
-      action: "BOOKING_SUBMITTED",
-      entityType: "BOOKING",
-      entityId: createdRecord.bookingId,
-      description: `New booking dossier submitted by ${normalizedName} (${createdRecord.bookingId}) for ${createdRecord.service}`,
-      metadata: {
-        bookingId: createdRecord.bookingId,
-        service: createdRecord.service,
-        budget: createdRecord.budget,
-        location: createdRecord.location,
-      },
+      }),
+      recordActivity({
+        actorId: clerkUserId,
+        actorEmail: normalizedEmail,
+        action: "BOOKING_SUBMITTED",
+        entityType: "BOOKING",
+        entityId: createdRecord.bookingId,
+        description: `New booking dossier submitted by ${normalizedName} (${createdRecord.bookingId}) for ${createdRecord.service}`,
+        metadata: {
+          bookingId: createdRecord.bookingId,
+          service: createdRecord.service,
+          budget: createdRecord.budget,
+          location: createdRecord.location,
+        },
+      }),
+    ]).catch((err) => {
+      console.warn("Non-fatal: Background booking mirroring notice:", err);
     });
 
     return NextResponse.json(
