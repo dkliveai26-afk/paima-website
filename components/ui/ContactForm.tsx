@@ -48,7 +48,7 @@ function playSuccessSound() {
 }
 
 export function ContactForm() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded, userId, getToken } = useAuth();
   const { user } = useUser();
   const { openAuthModal } = usePaimaAuth();
 
@@ -68,23 +68,28 @@ export function ContactForm() {
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Auto-populate authenticated patron name & email if available
+  // Auto-populate authenticated patron name & email and clear auth error if signed in
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
         ...prev,
-        name: prev.name || user.fullName || "",
+        name: prev.name || user.fullName || user.firstName || "",
         email: prev.email || user.primaryEmailAddress?.emailAddress || "",
       }));
     }
-  }, [user]);
+    if (isSignedIn) {
+      setErrorMessage((prev) =>
+        prev?.includes("Authentication required") ? null : prev
+      );
+    }
+  }, [user, isSignedIn]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
     // Guard: Unauthenticated visitors cannot submit booking
-    if (!isSignedIn) {
+    if (isLoaded && !isSignedIn) {
       setErrorMessage("Authentication required. Please sign in or create an account to submit your private consultation dossier.");
       openAuthModal();
       return;
@@ -93,9 +98,15 @@ export function ContactForm() {
     setSubmitting(true);
 
     try {
+      const token = await getToken().catch(() => null);
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const res = await fetch("/api/bookings", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           fullName: formData.name,
           email: formData.email,
@@ -106,6 +117,7 @@ export function ContactForm() {
           preferredDate: formData.preferredDate,
           projectDetails: formData.message,
           message: formData.message,
+          clerkUserId: userId || user?.id || null,
         }),
       });
 
@@ -352,7 +364,7 @@ export function ContactForm() {
       </div>
 
       {/* Authentication Notice if Signed Out */}
-      {!isSignedIn && (
+      {isLoaded && !isSignedIn && (
         <div className="p-3.5 bg-[#E1D4C2]/90 border border-[#A78D78] rounded-xl flex items-center justify-between gap-3 shadow-sm">
           <div className="flex items-center gap-2 text-xs font-bold text-black">
             <Lock className="w-4 h-4 text-black/70 shrink-0" />

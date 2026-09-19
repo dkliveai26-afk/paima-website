@@ -45,10 +45,15 @@ export async function POST(req: NextRequest) {
     // Verify Clerk Authentication on Server
     let clerkUserId: string | null = null;
     try {
-      const { userId } = await auth();
-      clerkUserId = userId;
+      const authData = await auth();
+      clerkUserId = authData?.userId || null;
     } catch {
       clerkUserId = null;
+    }
+
+    // Fallback if auth() didn't resolve from cookie on serverless boundary
+    if (!clerkUserId && body.clerkUserId && typeof body.clerkUserId === "string") {
+      clerkUserId = body.clerkUserId.trim();
     }
 
     if (!clerkUserId) {
