@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { constructMetadata } from "@/lib/seo";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { BentoGridServices } from "@/components/ui/BentoGridServices";
 import {
   SlideFromLeft,
@@ -84,11 +84,39 @@ export default function ServicesPage() {
 
       {/* PROCESS */}
       <section aria-label="Methodology & Process" className="mb-16 sm:mb-28 lg:mb-40">
-        <SectionHeading
-          eyebrow="THE PAIMA METHOD"
-          title="The Five Phases of Creation"
-          subtitle="A structured, meticulous journey transforming conceptual intention into architectural reality."
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center mb-8 sm:mb-12">
+          <div className="lg:col-span-5 flex flex-col justify-center">
+            <SlideFromLeft>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="w-8 h-[2px] bg-black" />
+                <span className="text-[11px] font-sans tracking-[0.2em] uppercase font-extrabold text-black">
+                  THE PAIMA METHOD
+                </span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.15] text-black">
+                The Five Phases of Creation
+              </h2>
+              <p className="mt-4 font-sans text-sm md:text-base font-semibold leading-relaxed text-black max-w-xl">
+                A structured, meticulous journey transforming conceptual intention into architectural reality.
+              </p>
+            </SlideFromLeft>
+          </div>
+
+          <div className="lg:col-span-7">
+            <SlideFromRight delay={0.1}>
+              <div className="relative w-full aspect-[1024/358] overflow-hidden rounded-2xl border border-[#A78D78]/50 shadow-xl bg-[#BEB5A9]/40">
+                <Image
+                  src="/images/paima-representative.png"
+                  alt="Paima Representative & Studio Identity"
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                />
+              </div>
+            </SlideFromRight>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mt-8 sm:mt-12">
           {PROCESS_STEPS.map((item, idx) => (
