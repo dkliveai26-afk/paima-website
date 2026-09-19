@@ -32,7 +32,7 @@ export function getAuthorizedAdminEmails(): string[] {
 export async function verifyAdminAuth(): Promise<AdminAuthResult> {
   try {
     const allowedAdminEmails = getAuthorizedAdminEmails();
-    const jwtSecret = (process.env.ADMIN_JWT_SECRET || "paima-secure-jwt-secret-987654321").replace(/^["']|["']$/g, '').trim();
+    const jwtSecret = process.env.ADMIN_JWT_SECRET || "paima-secure-jwt-secret-987654321";
 
     if (allowedAdminEmails.length === 0 || !jwtSecret) {
       console.warn(

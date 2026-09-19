@@ -13,19 +13,11 @@ export async function POST(req: Request) {
 
     const normalizedEmail = email.toLowerCase().trim();
     const allowedEmails = getAuthorizedAdminEmails();
-    const rawEnvPassword = (process.env.ADMIN_PASSWORD || "").replace(/^["']|["']$/g, '').trim();
-    const validPasswords = new Set([
-      "dev.dilkhush",
-      "dev.dilkhush@$$",
-      ...(rawEnvPassword ? [rawEnvPassword] : [])
-    ]);
-    const jwtSecret = (process.env.ADMIN_JWT_SECRET || "paima-secure-jwt-secret-987654321").replace(/^["']|["']$/g, '').trim();
+    const adminPassword = process.env.ADMIN_PASSWORD || "dev.dilkhush@$$";
+    const jwtSecret = process.env.ADMIN_JWT_SECRET || "paima-secure-jwt-secret-987654321";
 
     // Verify Email and Password
-    const isEmailAllowed = allowedEmails.includes(normalizedEmail);
-    const isPasswordValid = validPasswords.has(password.trim()) || validPasswords.has(password);
-
-    if (!isEmailAllowed || !isPasswordValid) {
+    if (!allowedEmails.includes(normalizedEmail) || password !== adminPassword) {
       // Intentional generic delay to prevent basic timing attacks
       await new Promise(resolve => setTimeout(resolve, 500));
       return NextResponse.json({ error: "Invalid admin credentials" }, { status: 401 });

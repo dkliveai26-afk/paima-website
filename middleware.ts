@@ -4,7 +4,8 @@ import { jwtVerify } from "jose";
 
 // Clerk middleware handler — reads NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and
 // CLERK_SECRET_KEY directly from environment variables. No hardcoded fallback
-// keys are used here to prevent custom domain DNS errors.
+// keys are used here; hardcoded keys previously caused clerk.paimadesign.com
+// DNS errors by encoding a custom domain into the publishable key payload.
 const handleClerk = clerkMiddleware(async (auth, req) => {
   return NextResponse.next();
 });
@@ -13,11 +14,7 @@ export default async function middleware(req: NextRequest, evt: NextFetchEvent) 
   const pathname = req.nextUrl.pathname;
 
   // 1. Edge protection for Admin API endpoints (/api/admin/* except login and logout)
-  if (
-    pathname.startsWith("/api/admin") &&
-    !pathname.includes("/login") &&
-    !pathname.includes("/logout")
-  ) {
+  if (pathname.startsWith("/api/admin") && !pathname.includes("/login") && !pathname.includes("/logout")) {
     const sessionCookie = req.cookies.get("paima_admin_session")?.value;
 
     if (!sessionCookie) {
@@ -33,21 +30,12 @@ export default async function middleware(req: NextRequest, evt: NextFetchEvent) 
     }
   }
 
-  // 2. Execute Clerk middleware safely — catches any handshake or configuration
-  // exceptions to completely prevent 500 MIDDLEWARE_INVOCATION_FAILED crashes.
+  // 2. Execute Clerk middleware safely — if Clerk env vars are not set on Vercel,
+  // the catch block prevents a 500 MIDDLEWARE_INVOCATION_FAILED crash.
   try {
     return await handleClerk(req, evt);
   } catch (err) {
     console.error("[Middleware] Clerk execution notice:", err);
-
-    // If a handshake query failed, redirect cleanly to strip the param and load the page
-    if (req.nextUrl.searchParams.has("__clerk_handshake")) {
-      const cleanUrl = req.nextUrl.clone();
-      cleanUrl.searchParams.delete("__clerk_handshake");
-      cleanUrl.searchParams.delete("__clerk_help");
-      return NextResponse.redirect(cleanUrl);
-    }
-
     return NextResponse.next();
   }
 }

@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Check, Send, AlertCircle, Calendar, Lock, ShieldCheck } from "lucide-react";
-import { useAuth, useUser } from "@clerk/nextjs";
-import { usePaimaAuth } from "@/components/auth/PaimaAuthContext";
+import { Check, Send, AlertCircle, Calendar } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { GoogleAddressAutocomplete } from "@/components/ui/GoogleAddressAutocomplete";
 
@@ -48,10 +47,7 @@ function playSuccessSound() {
 }
 
 export function ContactForm() {
-  const { isSignedIn, isLoaded, userId, getToken } = useAuth();
-  const { user } = useUser();
-  const { openAuthModal } = usePaimaAuth();
-
+  const { user, isSignedIn } = useUser();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -63,50 +59,30 @@ export function ContactForm() {
     message: "",
   });
 
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [bookingId, setBookingId] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  // Auto-populate authenticated patron name & email and clear auth error if signed in
   useEffect(() => {
-    if (user) {
+    if (isSignedIn && user) {
       setFormData((prev) => ({
         ...prev,
         name: prev.name || user.fullName || user.firstName || "",
         email: prev.email || user.primaryEmailAddress?.emailAddress || "",
       }));
     }
-    if (isSignedIn) {
-      setErrorMessage((prev) =>
-        prev?.includes("Authentication required") ? null : prev
-      );
-    }
-  }, [user, isSignedIn]);
+  }, [isSignedIn, user]);
+
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     setErrorMessage(null);
 
-    // Guard: Unauthenticated visitors cannot submit booking
-    if (isLoaded && !isSignedIn) {
-      setErrorMessage("Authentication required. Please sign in or create an account to submit your private consultation dossier.");
-      openAuthModal();
-      return;
-    }
-
-    setSubmitting(true);
-
     try {
-      const token = await getToken().catch(() => null);
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
       const res = await fetch("/api/bookings", {
         method: "POST",
-        headers,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fullName: formData.name,
           email: formData.email,
@@ -117,16 +93,12 @@ export function ContactForm() {
           preferredDate: formData.preferredDate,
           projectDetails: formData.message,
           message: formData.message,
-          clerkUserId: userId || user?.id || null,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 401) {
-          openAuthModal();
-        }
         throw new Error(data.error || "Failed to submit booking dossier.");
       }
 
@@ -362,23 +334,6 @@ export function ContactForm() {
           placeholder="Describe your architectural aspirations, preferred timeline, or material sensibilities..."
         />
       </div>
-
-      {/* Authentication Notice if Signed Out */}
-      {isLoaded && !isSignedIn && (
-        <div className="p-3.5 bg-[#E1D4C2]/90 border border-[#A78D78] rounded-xl flex items-center justify-between gap-3 shadow-sm">
-          <div className="flex items-center gap-2 text-xs font-bold text-black">
-            <Lock className="w-4 h-4 text-black/70 shrink-0" />
-            <span>Sign in required to verify and transmit private dossier</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => openAuthModal()}
-            className="px-3.5 py-1.5 rounded-full bg-black text-[#E1D4C2] text-[10px] font-sans uppercase tracking-wider font-extrabold shrink-0 hover:bg-[#333] transition-colors min-h-[36px]"
-          >
-            Get Started
-          </button>
-        </div>
-      )}
 
       {/* Submit Button */}
       <button

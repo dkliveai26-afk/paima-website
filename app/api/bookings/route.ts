@@ -42,25 +42,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify Clerk Authentication on Server
+    // Associate with Clerk User ID if authenticated
     let clerkUserId: string | null = null;
     try {
-      const authData = await auth();
-      clerkUserId = authData?.userId || null;
+      const { userId } = await auth();
+      clerkUserId = userId;
     } catch {
-      clerkUserId = null;
-    }
-
-    // Fallback if auth() didn't resolve from cookie on serverless boundary
-    if (!clerkUserId && body.clerkUserId && typeof body.clerkUserId === "string") {
-      clerkUserId = body.clerkUserId.trim();
-    }
-
-    if (!clerkUserId) {
-      return NextResponse.json(
-        { error: "Authentication required. Please sign in or create an account to submit your private consultation dossier." },
-        { status: 401 }
-      );
+      // Guest booking
     }
 
     const normalizedEmail = email.trim().toLowerCase();
@@ -81,10 +69,12 @@ export async function POST(req: NextRequest) {
       clerkUserId,
     });
 
-    // 2. Dispatch real PAIMA admin email notification (background fire-and-forget so response is instant)
-    sendNewBookingNotificationEmail(createdRecord).catch((emailErr) => {
+    // 2. Dispatch real PAIMA admin email notification (ONLY AFTER successful DB write)
+    try {
+      await sendNewBookingNotificationEmail(createdRecord);
+    } catch (emailErr) {
       console.warn("Non-fatal: Admin email notification dispatch failed:", emailErr);
-    });
+    }
 
     // 2. Mirror booking as an inquiry message so the admin Messages inbox shows it
     try {
