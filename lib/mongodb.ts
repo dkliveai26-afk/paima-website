@@ -20,8 +20,13 @@ declare global {
 }
 
 function getMongoUri(): string | null {
-  if (process.env.MONGODB_URI && process.env.MONGODB_URI.trim().length > 0) {
-    return process.env.MONGODB_URI.trim();
+  const uri = process.env.MONGODB_URI?.trim();
+  if (uri && uri.length > 0) {
+    // In production / serverless, localhost or 127.0.0.1 is unreachable and wastes connection timeout
+    if (process.env.NODE_ENV === "production" && (uri.includes("127.0.0.1") || uri.includes("localhost"))) {
+      return null;
+    }
+    return uri;
   }
   if (process.env.NODE_ENV === "development") {
     return DEFAULT_MONGODB_URI;
@@ -30,11 +35,13 @@ function getMongoUri(): string | null {
 }
 
 export function isMongoConfigured(): boolean {
+  const uri = getMongoUri();
+  if (!uri) return false;
   const lastFail = global._mongoLastFailure || lastConnectionFailure;
   if (Date.now() - lastFail < FAILURE_COOLDOWN_MS) {
     return false; // Skip slow connection attempts during cooldown
   }
-  return Boolean(process.env.MONGODB_URI && process.env.MONGODB_URI.trim().length > 0);
+  return true;
 }
 
 export async function getMongoClient(): Promise<MongoClient | null> {
